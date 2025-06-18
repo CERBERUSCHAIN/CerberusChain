@@ -1,0 +1,167 @@
+/* 1. RESET & VARIABLES */
+:root {
+  --g1: #FC007A; /* pink */
+  --g2: #8E2DE2; /* purple */
+  --g3: #007FFF; /* blue */
+  --gradient: linear-gradient(45deg, var(--g1), var(--g2), var(--g3));
+}
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+body {
+  background: #000;
+  color: #eee;
+  font-family: 'Poppins', sans-serif;
+  overflow-x: hidden;
+}
+
+/* 2. NAV */
+.site-header {
+  position: fixed;
+  width: 100%;
+  top: 0; left: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 100;
+}
+.nav.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+}
+.nav a {
+  text-decoration: none;
+  font-weight: 600;
+  color: #fff;
+  margin-left: 2rem;
+}
+.nav a:first-child { margin-left: 0; }
+
+/* 3. GRADIENT TEXT (static) */
+.gradient-text {
+  background: var(--gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* 4. HERO */
+.hero {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding-top: 4rem;
+}
+.hero-content h1 {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+.hero-content .tagline {
+  margin-bottom: 2rem;
+  font-size: 1.2rem;
+}
+
+/* 5. BUTTONS */
+.hero-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.btn {
+  padding: 1rem 2rem;
+  border-radius: 999px;
+  font-weight: 600;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+.btn.primary {
+  background: var(--gradient);
+  color: #000;
+  box-shadow: 0 6px 16px rgba(252,0,122,0.4), 0 6px 24px rgba(0,127,255,0.4);
+}
+.btn.outline {
+  background: transparent;
+  color: #fff;
+  border: 2px solid transparent;
+  border-image: conic-gradient(from 0deg, var(--g1), var(--g2), var(--g3)) 1;
+}
+.btn.outline::before {
+  content:'';
+  position:absolute;
+  top:-50%; left:-50%;
+  width:200%; height:200%;
+  background: conic-gradient(from 0deg, var(--g1), var(--g2), var(--g3));
+  animation: spin 4s linear infinite;
+  z-index: -1;
+}
+.btn.outline:hover { color: #000; }
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* 6. SECTIONS */
+.section {
+  padding: 6rem 1rem;
+  text-align: center;
+}
+.section-dark {
+  background: #111;
+}
+.section-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+.section-title.gradient-text {
+  background: var(--gradient);
+}
+
+/* 7. FEATURES LIST */
+.features-list {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+/* 8. CARDS */
+.card {
+  background: rgba(255,255,255,0.05);
+  border-radius: .75rem;
+  padding: 1.5rem;
+  width: 180px;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+}
+.card h3 {
+  margin-bottom: .5rem;
+}
+
+/* 9. FOOTER */
+.site-footer {
+  background: #111;
+  color: #777;
+  text-align: center;
+  padding: 2rem 1rem;
+}
+.site-footer a {
+  color: #777;
+  margin: 0 .75rem;
+  text-decoration: none;
+}
+.site-footer a:hover { text-decoration: underline; }
+.site-footer .footer-email {
+  display: block;
+  margin: 1rem 0 0.5rem;
+}

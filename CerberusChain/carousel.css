@@ -1,0 +1,36 @@
+/* carousel.css */
+
+/* wrapper */
+.slider {
+  width: 240px;
+  height: 240px;
+  margin: 2rem auto;
+  position: relative;
+  transform-style: preserve-3d;
+  animation: carousel-spin 20s linear infinite;
+}
+@keyframes carousel-spin {
+  from { transform: perspective(800px) rotateX(-15deg) rotateY(0); }
+  to   { transform: perspective(800px) rotateX(-15deg) rotateY(360deg); }
+}
+
+/* items */
+.slider .item {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform:
+    rotateY(calc((var(--position)-1)*360deg/var(--quantity)))
+    translateZ(var(--tz,300px));
+}
+
+/* different carousels: features vs phases */
+.slider-features { --quantity:3;  --tz:280px; }
+.slider-phases   { --quantity:9;  --tz:360px; }
+
+/* ensure cards front faces are crisp */
+.slider .card {
+  transform: translateZ(1px);
+}
