@@ -1,0 +1,10 @@
+# SUPER QUICK DEPLOYMENT COMMANDS (after SSH agent setup)
+# These work without any passphrase prompts!
+
+# 1. Upload all files
+scp C:\Users\lowke\Projects\CerberusChain\index.html C:\Users\lowke\Projects\CerberusChain\style.css C:\Users\lowke\Projects\CerberusChain\animations.css C:\Users\lowke\Projects\CerberusChain\script.js root@165.227.200.202:/var/www/cerberuschain.com/
+
+# 2. Reload nginx
+ssh root@165.227.200.202 "sudo systemctl reload nginx"
+
+# OR just run: .\deploy-easy.ps1
