@@ -1,0 +1,35 @@
+/* ---------- 3-D CAROUSEL CORE ---------- */
+.slider {
+  --quantity: 1;                /* updated by script */
+  --tz: 320px;                  /* base translate-Z */
+  width: 240px;
+  height: 240px;
+  margin: 3rem auto;
+  position: relative;
+  transform-style: preserve-3d;
+  animation: rotate 18s linear infinite;
+}
+
+@keyframes rotate {
+  from { transform: perspective(900px) rotateX(-15deg) rotateY(0deg); }
+  to   { transform: perspective(900px) rotateX(-15deg) rotateY(-360deg); }
+}
+
+/* each panel */
+.slider .item {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform:
+    rotateY(calc(var(--index) * 360deg / var(--quantity)))
+    translateZ(var(--tz));
+}
+
+/* crisp front faces */
+.card { transform: translateZ(1px); }
+
+/* feature vs phase presets */
+.slider-features { --tz: 260px; }
+.slider-phases   { --tz: 420px; }

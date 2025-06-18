@@ -1,0 +1,124 @@
+/* ===============================================================
+   GLOBALS
+=============================================================== */
+:root {
+  --pink:  #FF2CDF;
+  --blue:  #0014FF;
+  --cyan:  #00E1FD;
+  --violet:#8E2DE2;
+  --grad:  linear-gradient(45deg,var(--pink),var(--violet),var(--cyan));
+}
+
+*,
+*::before,
+*::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background:#0A0A12;
+  color:#D9DBFF;
+  overflow-x: hidden;
+}
+
+/* containers */
+.container { width: min(1280px, 90%); margin-inline:auto; }
+
+/* ===============================================================
+   NAV
+=============================================================== */
+.site-header {
+  position: fixed; inset: 0 0 auto 0; height: 70px;
+  backdrop-filter: blur(8px);
+  background: rgba(10,10,20,0.65);
+  z-index: 999;
+  display: flex; align-items: center;
+}
+.nav { display: flex; justify-content: space-between; align-items: center; }
+
+.logo { font-size: 1.7rem; font-family: 'ICA Rubrik',sans-serif; }
+
+.nav-links { display:flex; gap:1.5rem; }
+.nav-links a { text-decoration:none; font-weight:600; color:#fff; }
+
+.gradient {
+  background: var(--grad);
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* follow box */
+.follow-box {
+  position: relative; display:flex; gap:.5rem; font-size:.85rem;
+  background: rgba(255,255,255,0.06); padding:.5rem 1rem; border-radius:40px;
+}
+.follow-box .border {
+  position:absolute; inset:0; pointer-events:none;
+  stroke:var(--pink); stroke-width:2; fill:none;
+  stroke-dasharray:280; stroke-dashoffset:280;
+  animation: dash 6s linear infinite;
+}
+@keyframes dash { to { stroke-dashoffset:0; } }
+
+/* ===============================================================
+   HERO
+=============================================================== */
+.hero {
+  height: 100vh; display:flex; flex-direction:column;
+  justify-content:center; align-items:center; text-align:center;
+  background: radial-gradient(circle at 50% 20%, #1a1a25 0%, #0A0A12 70%);
+  padding-top:70px;
+}
+.hero-title { font-size:clamp(2.5rem,7vw,6rem); font-family:'ICA Rubrik',sans-serif; }
+.tagline { margin-top:1rem; font-size:1.2rem; opacity:.85; }
+
+.hero-btns { margin-top:2.5rem; display:flex; flex-wrap:wrap; gap:1rem; }
+.btn {
+  padding:.75rem 2rem; border-radius:50px; font-weight:600;
+  position:relative; overflow:hidden; text-decoration:none;
+}
+.primary {
+  background:var(--grad); color:#000; box-shadow:0 0 18px #FF2CDF55;
+}
+.outline {
+  color:#fff; border:2px solid transparent;
+  border-image:conic-gradient(var(--pink),var(--blue),var(--pink)) 1;
+}
+.outline::before {
+  content:''; position:absolute; inset:-50%; border-radius:50%;
+  background:conic-gradient(var(--pink),var(--blue),var(--pink));
+  animation:spin 5s linear infinite; z-index:-1;
+}
+@keyframes spin { to{ transform:rotate(360deg);} }
+
+/* ===============================================================
+   SECTIONS
+=============================================================== */
+.section { padding:6rem 1rem 7rem; text-align:center; }
+.section-dark { background:#10101A; }
+.section-title { font-size:2.6rem; font-family:'ICA Rubrik',sans-serif; margin-bottom:1rem; }
+.section-copy  { max-width:650px; margin-inline:auto; line-height:1.6; }
+
+/* cards shared */
+.card {
+  width:200px; padding:1.5rem; border-radius:.75rem;
+  background:rgba(255,255,255,0.05);
+  backdrop-filter:blur(6px);
+  box-shadow:0 0 18px #FF2CDF25;
+  text-align:center;
+}
+.card h3 { margin-bottom:.5rem; }
+
+/* ===============================================================
+   FOOTER
+=============================================================== */
+.footer { background:#0F0F18; padding:2rem 1rem; text-align:center; }
+.footer-nav { display:flex; justify-content:center; gap:2rem; margin-bottom:1rem; }
+.footer-nav a { color:#8BA0FF; text-decoration:none; font-size:.9rem; }
+
+/* ===============================================================
+   REUSE
+=============================================================== */
+@media(max-width:768px){
+  .follow-box { display:none; }
+}
