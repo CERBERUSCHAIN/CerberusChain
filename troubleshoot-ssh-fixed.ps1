@@ -1,4 +1,4 @@
-# SSH Troubleshooting Script
+# SSH Troubleshooting Script - FIXED VERSION
 # Run this to diagnose SSH issues
 
 Write-Host "🔍 SSH Troubleshooting..." -ForegroundColor Cyan
@@ -30,9 +30,9 @@ $sshCommands = @('ssh', 'scp', 'ssh-add', 'ssh-keygen')
 foreach ($cmd in $sshCommands) {
     $path = Get-Command $cmd -ErrorAction SilentlyContinue
     if ($path) {
-        Write-Host "$cmd: $($path.Source)" -ForegroundColor Gray
+        Write-Host "${cmd}: $($path.Source)" -ForegroundColor Gray
     } else {
-        Write-Host "$cmd: Not Found" -ForegroundColor Red
+        Write-Host "${cmd}: Not Found" -ForegroundColor Red
     }
 }
 
@@ -44,5 +44,9 @@ Write-Host "🧪 Testing SSH Key:" -ForegroundColor Yellow
 try {
     ssh-keygen -l -f "C:\Users\lowke\.ssh\id_rsa.pub"
 } catch {
-    Write-Host "❌ Could not read SSH key" -ForegroundColor Red
+    Write-Host "Could not read SSH key" -ForegroundColor Red
 }
+
+Write-Host "🧪 Testing SSH Connection:" -ForegroundColor Yellow
+Write-Host "Attempting connection to server..." -ForegroundColor Gray
+ssh -o BatchMode=yes -o ConnectTimeout=5 root@165.227.200.202 "echo 'Connection test successful!'"
