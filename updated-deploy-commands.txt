@@ -1,0 +1,16 @@
+# COMPLETE DEPLOYMENT COMMANDS FOR CERBERUSCHAIN
+# Copy and paste these commands one by one in PowerShell
+
+# 1. Upload ALL files at once
+scp -i C:\Users\lowke\.ssh\id_rsa `
+  C:\Users\lowke\Projects\CerberusChain\index.html `
+  C:\Users\lowke\Projects\CerberusChain\style.css `
+  C:\Users\lowke\Projects\CerberusChain\animations.css `
+  C:\Users\lowke\Projects\CerberusChain\script.js `
+  root@165.227.200.202:/var/www/cerberuschain.com/
+
+# 2. Reload nginx
+ssh -i C:\Users\lowke\.ssh\id_rsa root@165.227.200.202 "sudo systemctl reload nginx"
+
+# 3. Check if files uploaded correctly (optional)
+ssh -i C:\Users\lowke\.ssh\id_rsa root@165.227.200.202 "ls -la /var/www/cerberuschain.com/"
