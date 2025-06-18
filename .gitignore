@@ -1,2 +1,56 @@
-node_modules/
+# CerberusChain Project - Git Ignore File
+
+# Development files
+.vscode/
+.qodo/
+*.log
+*.tmp
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# SSH keys and sensitive data
+*.pem
+*.key
+id_rsa*
 .env
+.env.local
+.env.production
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# Photo references (keep local only)
+PhotoReferences/
+assets/temp/
+assets/drafts/
+
+# Node modules (if you add any later)
+node_modules/
+npm-debug.log*
+
+# Build outputs (if you add build process later)
+dist/
+build/
+*.min.js
+*.min.css
+
+# Editor files
+*.swp
+*.swo
+*~
+
+# Windows
+desktop.ini
+
+# Mac
+.AppleDouble
+.LSOverride
