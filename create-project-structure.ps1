@@ -185,9 +185,9 @@ Technology Stack:
 ## Features
 
 ### The Three Heads of Cerberus:
-- Strategy: Automated entry and exit rules tailored for memes
-- Volume: Real-time detection of token volume spikes
-- Security: On-chain rug-pull filters to protect funds
+1. Strategy: Automated entry and exit rules tailored for memes
+2. Volume: Real-time detection of token volume spikes
+3. Security: On-chain rug-pull filters to protect funds
 
 ### Bot Capabilities:
 - Volume Bot: Continuous SOL-to-token swaps
@@ -206,25 +206,25 @@ Technology Stack:
 
 ### Development Setup
 
-Clone and setup:
+1. Clone and setup:
 ```bash
 cd backend
 cargo build
 ```
 
-Frontend setup:
+2. Frontend setup:
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
 
-Database setup:
+3. Database setup:
 ```bash
 ./scripts/database/setup.sh
 ```
 
-Environment configuration:
+4. Environment configuration:
 ```bash
 cp .env.example .env
 # Edit .env with your configuration
@@ -241,7 +241,7 @@ cp .env.example .env
 
 - 10M credits/month subscription
 - RPC calls, WebSocket streams, Sender API
-- Automatic credit monitoring (90 percent limit pause)
+- Automatic credit monitoring (90% limit pause)
 - Real-time transaction parsing
 
 ## Deployment
