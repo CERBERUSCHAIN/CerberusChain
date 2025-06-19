@@ -608,8 +608,8 @@ Write-Host "🎉 Project structure created successfully!" -ForegroundColor Green
 Write-Host ""
 Write-Host "📋 Next Steps:" -ForegroundColor Yellow
 Write-Host "  1. Copy .env.example to .env and configure your settings" -ForegroundColor White
-Write-Host "  2. Install Rust dependencies: cd backend && cargo build" -ForegroundColor White
-Write-Host "  3. Install Node.js dependencies: cd frontend && npm install" -ForegroundColor White
+Write-Host "  2. Install Rust dependencies: cd backend; cargo build" -ForegroundColor White
+Write-Host "  3. Install Node.js dependencies: cd frontend; npm install" -ForegroundColor White
 Write-Host "  4. Set up your PostgreSQL database" -ForegroundColor White
 Write-Host "  5. Configure your Helius API key and other secrets" -ForegroundColor White
 Write-Host ""
