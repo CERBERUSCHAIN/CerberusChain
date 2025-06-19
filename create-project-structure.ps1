@@ -7,6 +7,13 @@ Write-Host "📁 Base Directory: $PWD" -ForegroundColor Yellow
 
 # Ensure we're in the correct directory
 $projectRoot = "C:\Users\lowke\Projects\Cerberus-Chain-Hydra"
+
+# Create the project root directory if it doesn't exist
+if (-not (Test-Path $projectRoot)) {
+    Write-Host "📁 Creating project root directory: $projectRoot" -ForegroundColor Yellow
+    New-Item -ItemType Directory -Path $projectRoot -Force | Out-Null
+}
+
 if ($PWD.Path -ne $projectRoot) {
     Write-Host "⚠️  Changing to project directory: $projectRoot" -ForegroundColor Yellow
     Set-Location $projectRoot
