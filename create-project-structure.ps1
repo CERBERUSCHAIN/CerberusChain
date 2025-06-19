@@ -285,7 +285,7 @@ New-FileWithContent -FilePath "README.md" -Content $readmeContent
 
 # Docker Compose
 $dockerComposeContent = @"
-version: '3.8'
+version: "3.8"
 
 services:
   postgres:
