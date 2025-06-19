@@ -194,28 +194,28 @@ Cerberus Chain aims to redefine technological innovation in cryptocurrency tradi
 ### Development Setup
 
 1. **Clone and setup**:
-   \`\`\`bash
+   ```bash
    cd backend
    cargo build
-   \`\`\`
+   ```
 
 2. **Frontend setup**:
-   \`\`\`bash
+   ```bash
    cd frontend
    npm install
    npm run dev
-   \`\`\`
+   ```
 
 3. **Database setup**:
-   \`\`\`bash
+   ```bash
    ./scripts/database/setup.sh
-   \`\`\`
+   ```
 
 4. **Environment configuration**:
-   \`\`\`bash
+   ```bash
    cp .env.example .env
    # Edit .env with your configuration
-   \`\`\`
+   ```
 
 ## 🔐 Security
 
@@ -234,14 +234,14 @@ Cerberus Chain aims to redefine technological innovation in cryptocurrency tradi
 ## 🚀 Deployment
 
 ### Docker Deployment
-\`\`\`bash
+```bash
 docker-compose up -d
-\`\`\`
+```
 
 ### DigitalOcean Deployment
-\`\`\`bash
+```bash
 ./scripts/deployment/deploy.sh
-\`\`\`
+```
 
 ## 📈 Monitoring
 
@@ -275,7 +275,7 @@ services:
     environment:
       POSTGRES_DB: cerberus_hydra
       POSTGRES_USER: cerberus
-      POSTGRES_PASSWORD: \${POSTGRES_PASSWORD}
+      POSTGRES_PASSWORD: `${POSTGRES_PASSWORD}
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./database/schemas:/docker-entrypoint-initdb.d
@@ -304,10 +304,10 @@ services:
       dockerfile: Dockerfile
     container_name: cerberus-backend
     environment:
-      DATABASE_URL: postgresql://cerberus:\${POSTGRES_PASSWORD}@postgres:5432/cerberus_hydra
+      DATABASE_URL: postgresql://cerberus:`${POSTGRES_PASSWORD}@postgres:5432/cerberus_hydra
       REDIS_URL: redis://redis:6379
-      HELIUS_API_KEY: \${HELIUS_API_KEY}
-      JWT_SECRET: \${JWT_SECRET}
+      HELIUS_API_KEY: `${HELIUS_API_KEY}
+      JWT_SECRET: `${JWT_SECRET}
       RUST_LOG: info
     ports:
       - "8080:8080"
@@ -373,7 +373,7 @@ services:
     ports:
       - "3001:3000"
     environment:
-      GF_SECURITY_ADMIN_PASSWORD: \${GRAFANA_PASSWORD}
+      GF_SECURITY_ADMIN_PASSWORD: `${GRAFANA_PASSWORD}
     volumes:
       - grafana_data:/var/lib/grafana
       - ./infrastructure/monitoring/grafana:/etc/grafana/provisioning
@@ -826,23 +826,23 @@ jobs:
     - name: Log in to Container Registry
       uses: docker/login-action@v3
       with:
-        registry: \${{ env.REGISTRY }}
-        username: \${{ github.actor }}
-        password: \${{ secrets.GITHUB_TOKEN }}
+        registry: `${{ env.REGISTRY }}
+        username: `${{ github.actor }}
+        password: `${{ secrets.GITHUB_TOKEN }}
         
     - name: Build and push Docker images
       run: |
-        docker build -t \${{ env.REGISTRY }}/\${{ github.repository }}/backend:latest ./backend
-        docker build -t \${{ env.REGISTRY }}/\${{ github.repository }}/frontend:latest ./frontend
-        docker push \${{ env.REGISTRY }}/\${{ github.repository }}/backend:latest
-        docker push \${{ env.REGISTRY }}/\${{ github.repository }}/frontend:latest
+        docker build -t `${{ env.REGISTRY }}/`${{ github.repository }}/backend:latest ./backend
+        docker build -t `${{ env.REGISTRY }}/`${{ github.repository }}/frontend:latest ./frontend
+        docker push `${{ env.REGISTRY }}/`${{ github.repository }}/backend:latest
+        docker push `${{ env.REGISTRY }}/`${{ github.repository }}/frontend:latest
         
     - name: Deploy to DigitalOcean
       uses: appleboy/ssh-action@v1.0.0
       with:
-        host: \${{ secrets.DIGITALOCEAN_HOST }}
-        username: \${{ secrets.DIGITALOCEAN_USERNAME }}
-        key: \${{ secrets.DIGITALOCEAN_SSH_KEY }}
+        host: `${{ secrets.DIGITALOCEAN_HOST }}
+        username: `${{ secrets.DIGITALOCEAN_USERNAME }}
+        key: `${{ secrets.DIGITALOCEAN_SSH_KEY }}
         script: |
           cd /opt/cerberus-hydra
           docker-compose pull
@@ -902,7 +902,7 @@ createdb cerberus_hydra || echo "Database already exists"
 
 # Run migrations
 echo "🔄 Running migrations..."
-sqlx migrate run --database-url \$DATABASE_URL
+sqlx migrate run --database-url `$DATABASE_URL
 
 echo "✅ Database setup completed!"
 "@ | Out-File -FilePath "scripts/database/setup.sh" -Encoding UTF8
@@ -959,31 +959,31 @@ http {
         # Frontend
         location / {
             proxy_pass http://frontend;
-            proxy_set_header Host \$host;
-            proxy_set_header X-Real-IP \$remote_addr;
-            proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto \$scheme;
+            proxy_set_header Host `$host;
+            proxy_set_header X-Real-IP `$remote_addr;
+            proxy_set_header X-Forwarded-For `$proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto `$scheme;
         }
 
         # Backend API
         location /api/ {
             proxy_pass http://backend;
-            proxy_set_header Host \$host;
-            proxy_set_header X-Real-IP \$remote_addr;
-            proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto \$scheme;
+            proxy_set_header Host `$host;
+            proxy_set_header X-Real-IP `$remote_addr;
+            proxy_set_header X-Forwarded-For `$proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto `$scheme;
         }
 
         # WebSocket
         location /ws {
             proxy_pass http://backend;
             proxy_http_version 1.1;
-            proxy_set_header Upgrade \$http_upgrade;
+            proxy_set_header Upgrade `$http_upgrade;
             proxy_set_header Connection "upgrade";
-            proxy_set_header Host \$host;
-            proxy_set_header X-Real-IP \$remote_addr;
-            proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto \$scheme;
+            proxy_set_header Host `$host;
+            proxy_set_header X-Real-IP `$remote_addr;
+            proxy_set_header X-Forwarded-For `$proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto `$scheme;
         }
     }
 }
