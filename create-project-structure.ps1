@@ -90,7 +90,7 @@ foreach ($folder in $folders) {
 Write-Host "📄 Creating root configuration files..." -ForegroundColor Green
 
 # .gitignore
-@"
+$gitignoreContent = @'
 # Rust
 /target/
 **/*.rs.bk
@@ -147,10 +147,12 @@ temp/
 *.bak
 database/backups/*
 !database/backups/.gitkeep
-"@ | Out-File -FilePath ".gitignore" -Encoding UTF8
+'@
+
+$gitignoreContent | Out-File -FilePath ".gitignore" -Encoding UTF8
 
 # README.md
-@"
+$readmeContent = @'
 # 🐺 Cerberus Chain: Hydra
 
 **The Three-Headed Guardian of Memecoin Trading**
@@ -261,10 +263,12 @@ For support and inquiries: support@cerberuschain.com
 ---
 
 **Built by veterans, for traders. Guarding the future of memecoins.**
-"@ | Out-File -FilePath "README.md" -Encoding UTF8
+'@
+
+$readmeContent | Out-File -FilePath "README.md" -Encoding UTF8
 
 # Docker Compose
-@"
+$dockerComposeContent = @'
 version: '3.8'
 
 services:
@@ -275,7 +279,7 @@ services:
     environment:
       POSTGRES_DB: cerberus_hydra
       POSTGRES_USER: cerberus
-      POSTGRES_PASSWORD: `${POSTGRES_PASSWORD}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./database/schemas:/docker-entrypoint-initdb.d
@@ -304,10 +308,10 @@ services:
       dockerfile: Dockerfile
     container_name: cerberus-backend
     environment:
-      DATABASE_URL: postgresql://cerberus:`${POSTGRES_PASSWORD}@postgres:5432/cerberus_hydra
+      DATABASE_URL: postgresql://cerberus:${POSTGRES_PASSWORD}@postgres:5432/cerberus_hydra
       REDIS_URL: redis://redis:6379
-      HELIUS_API_KEY: `${HELIUS_API_KEY}
-      JWT_SECRET: `${JWT_SECRET}
+      HELIUS_API_KEY: ${HELIUS_API_KEY}
+      JWT_SECRET: ${JWT_SECRET}
       RUST_LOG: info
     ports:
       - "8080:8080"
@@ -373,7 +377,7 @@ services:
     ports:
       - "3001:3000"
     environment:
-      GF_SECURITY_ADMIN_PASSWORD: `${GRAFANA_PASSWORD}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD}
     volumes:
       - grafana_data:/var/lib/grafana
       - ./infrastructure/monitoring/grafana:/etc/grafana/provisioning
@@ -390,10 +394,12 @@ volumes:
 networks:
   cerberus-network:
     driver: bridge
-"@ | Out-File -FilePath "docker-compose.yml" -Encoding UTF8
+'@
+
+$dockerComposeContent | Out-File -FilePath "docker-compose.yml" -Encoding UTF8
 
 # Environment template
-@"
+$envContent = @'
 # Cerberus Chain: Hydra Environment Configuration
 
 # Database
@@ -449,11 +455,13 @@ PROMETHEUS_RETENTION_DAYS=30
 # Development
 RUST_LOG=debug
 RUST_BACKTRACE=1
-"@ | Out-File -FilePath ".env.example" -Encoding UTF8
+'@
+
+$envContent | Out-File -FilePath ".env.example" -Encoding UTF8
 
 # Create backend Cargo.toml
 Write-Host "📄 Creating backend Cargo.toml..." -ForegroundColor Green
-@"
+$cargoContent = @'
 [package]
 name = "cerberus-hydra-backend"
 version = "0.1.0"
@@ -534,10 +542,12 @@ prometheus = "0.13"
 [dev-dependencies]
 actix-rt = "2.9"
 actix-test = "0.1"
-"@ | Out-File -FilePath "backend/Cargo.toml" -Encoding UTF8
+'@
+
+$cargoContent | Out-File -FilePath "backend/Cargo.toml" -Encoding UTF8
 
 # Create backend main.rs
-@"
+$mainRsContent = @'
 //! Cerberus Chain: Hydra Backend
 //! Advanced Solana Memecoin Trading Bot
 //! 
@@ -604,10 +614,12 @@ async fn health_check() -> actix_web::Result<impl actix_web::Responder> {
         "timestamp": chrono::Utc::now().to_rfc3339()
     })))
 }
-"@ | Out-File -FilePath "backend/src/main.rs" -Encoding UTF8
+'@
+
+$mainRsContent | Out-File -FilePath "backend/src/main.rs" -Encoding UTF8
 
 # Create backend lib.rs
-@"
+$libRsContent = @'
 //! Cerberus Chain: Hydra Backend Library
 //! 
 //! Core modules and utilities for the trading bot backend
@@ -625,11 +637,13 @@ pub mod config;
 // Re-export commonly used types
 pub use auth::*;
 pub use config::*;
-"@ | Out-File -FilePath "backend/src/lib.rs" -Encoding UTF8
+'@
+
+$libRsContent | Out-File -FilePath "backend/src/lib.rs" -Encoding UTF8
 
 # Create frontend package.json
 Write-Host "📄 Creating frontend package.json..." -ForegroundColor Green
-@"
+$packageJsonContent = @'
 {
   "name": "cerberus-hydra-frontend",
   "version": "0.1.0",
@@ -674,10 +688,12 @@ Write-Host "📄 Creating frontend package.json..." -ForegroundColor Green
     "node": ">=18.0.0"
   }
 }
-"@ | Out-File -FilePath "frontend/package.json" -Encoding UTF8
+'@
+
+$packageJsonContent | Out-File -FilePath "frontend/package.json" -Encoding UTF8
 
 # Create frontend index.html
-@"
+$indexHtmlContent = @'
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -693,13 +709,15 @@ Write-Host "📄 Creating frontend package.json..." -ForegroundColor Green
   <script type="module" src="/src/index.tsx"></script>
 </body>
 </html>
-"@ | Out-File -FilePath "frontend/index.html" -Encoding UTF8
+'@
+
+$indexHtmlContent | Out-File -FilePath "frontend/index.html" -Encoding UTF8
 
 # Create Dockerfiles
 Write-Host "📄 Creating Docker configurations..." -ForegroundColor Green
 
 # Backend Dockerfile
-@"
+$backendDockerContent = @'
 FROM rust:1.75-slim as builder
 
 WORKDIR /app
@@ -739,10 +757,12 @@ RUN mkdir -p /app/logs
 EXPOSE 8080
 
 CMD ["./cerberus-hydra-backend"]
-"@ | Out-File -FilePath "backend/Dockerfile" -Encoding UTF8
+'@
+
+$backendDockerContent | Out-File -FilePath "backend/Dockerfile" -Encoding UTF8
 
 # Frontend Dockerfile
-@"
+$frontendDockerContent = @'
 FROM node:18-alpine as builder
 
 WORKDIR /app
@@ -771,10 +791,12 @@ COPY nginx.conf /etc/nginx/nginx.conf
 EXPOSE 3000
 
 CMD ["nginx", "-g", "daemon off;"]
-"@ | Out-File -FilePath "frontend/Dockerfile" -Encoding UTF8
+'@
+
+$frontendDockerContent | Out-File -FilePath "frontend/Dockerfile" -Encoding UTF8
 
 # Create GitHub Actions workflow
-@"
+$workflowContent = @'
 name: Deploy Cerberus Chain Hydra
 
 on:
@@ -826,34 +848,36 @@ jobs:
     - name: Log in to Container Registry
       uses: docker/login-action@v3
       with:
-        registry: `${{ env.REGISTRY }}
-        username: `${{ github.actor }}
-        password: `${{ secrets.GITHUB_TOKEN }}
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
         
     - name: Build and push Docker images
       run: |
-        docker build -t `${{ env.REGISTRY }}/`${{ github.repository }}/backend:latest ./backend
-        docker build -t `${{ env.REGISTRY }}/`${{ github.repository }}/frontend:latest ./frontend
-        docker push `${{ env.REGISTRY }}/`${{ github.repository }}/backend:latest
-        docker push `${{ env.REGISTRY }}/`${{ github.repository }}/frontend:latest
+        docker build -t ${{ env.REGISTRY }}/${{ github.repository }}/backend:latest ./backend
+        docker build -t ${{ env.REGISTRY }}/${{ github.repository }}/frontend:latest ./frontend
+        docker push ${{ env.REGISTRY }}/${{ github.repository }}/backend:latest
+        docker push ${{ env.REGISTRY }}/${{ github.repository }}/frontend:latest
         
     - name: Deploy to DigitalOcean
       uses: appleboy/ssh-action@v1.0.0
       with:
-        host: `${{ secrets.DIGITALOCEAN_HOST }}
-        username: `${{ secrets.DIGITALOCEAN_USERNAME }}
-        key: `${{ secrets.DIGITALOCEAN_SSH_KEY }}
+        host: ${{ secrets.DIGITALOCEAN_HOST }}
+        username: ${{ secrets.DIGITALOCEAN_USERNAME }}
+        key: ${{ secrets.DIGITALOCEAN_SSH_KEY }}
         script: |
           cd /opt/cerberus-hydra
           docker-compose pull
           docker-compose up -d
           docker system prune -f
-"@ | Out-File -FilePath ".github/workflows/deploy.yml" -Encoding UTF8
+'@
+
+$workflowContent | Out-File -FilePath ".github/workflows/deploy.yml" -Encoding UTF8
 
 # Create deployment scripts
 Write-Host "📄 Creating deployment scripts..." -ForegroundColor Green
 
-@"
+$deployScriptContent = @'
 #!/bin/bash
 # Cerberus Chain: Hydra Deployment Script
 
@@ -886,10 +910,12 @@ echo "🌐 Frontend: http://localhost:3000"
 echo "🔧 Backend API: http://localhost:8080"
 echo "📊 Grafana: http://localhost:3001"
 echo "📈 Prometheus: http://localhost:9090"
-"@ | Out-File -FilePath "scripts/deployment/deploy.sh" -Encoding UTF8
+'@
+
+$deployScriptContent | Out-File -FilePath "scripts/deployment/deploy.sh" -Encoding UTF8
 
 # Create database setup script
-@"
+$dbSetupContent = @'
 #!/bin/bash
 # Database Setup Script
 
@@ -902,13 +928,15 @@ createdb cerberus_hydra || echo "Database already exists"
 
 # Run migrations
 echo "🔄 Running migrations..."
-sqlx migrate run --database-url `$DATABASE_URL
+sqlx migrate run --database-url $DATABASE_URL
 
 echo "✅ Database setup completed!"
-"@ | Out-File -FilePath "scripts/database/setup.sh" -Encoding UTF8
+'@
+
+$dbSetupContent | Out-File -FilePath "scripts/database/setup.sh" -Encoding UTF8
 
 # Create monitoring configuration
-@"
+$prometheusContent = @'
 global:
   scrape_interval: 15s
   evaluation_interval: 15s
@@ -935,10 +963,12 @@ scrape_configs:
   - job_name: 'redis'
     static_configs:
       - targets: ['redis:6379']
-"@ | Out-File -FilePath "infrastructure/monitoring/prometheus.yml" -Encoding UTF8
+'@
+
+$prometheusContent | Out-File -FilePath "infrastructure/monitoring/prometheus.yml" -Encoding UTF8
 
 # Create nginx configuration
-@"
+$nginxContent = @'
 events {
     worker_connections 1024;
 }
@@ -959,35 +989,37 @@ http {
         # Frontend
         location / {
             proxy_pass http://frontend;
-            proxy_set_header Host `$host;
-            proxy_set_header X-Real-IP `$remote_addr;
-            proxy_set_header X-Forwarded-For `$proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto `$scheme;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
         }
 
         # Backend API
         location /api/ {
             proxy_pass http://backend;
-            proxy_set_header Host `$host;
-            proxy_set_header X-Real-IP `$remote_addr;
-            proxy_set_header X-Forwarded-For `$proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto `$scheme;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
         }
 
         # WebSocket
         location /ws {
             proxy_pass http://backend;
             proxy_http_version 1.1;
-            proxy_set_header Upgrade `$http_upgrade;
+            proxy_set_header Upgrade $http_upgrade;
             proxy_set_header Connection "upgrade";
-            proxy_set_header Host `$host;
-            proxy_set_header X-Real-IP `$remote_addr;
-            proxy_set_header X-Forwarded-For `$proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto `$scheme;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
         }
     }
 }
-"@ | Out-File -FilePath "infrastructure/nginx/nginx.conf" -Encoding UTF8
+'@
+
+$nginxContent | Out-File -FilePath "infrastructure/nginx/nginx.conf" -Encoding UTF8
 
 # Create placeholder files to ensure directories are tracked
 $placeholderFiles = @(
@@ -1023,7 +1055,7 @@ foreach ($file in $placeholderFiles) {
 Write-Host "📄 Creating VS Code workspace configuration..." -ForegroundColor Green
 New-Item -ItemType Directory -Path ".vscode" -Force | Out-Null
 
-@"
+$workspaceContent = @'
 {
     "folders": [
         {
@@ -1057,7 +1089,9 @@ New-Item -ItemType Directory -Path ".vscode" -Force | Out-Null
         ]
     }
 }
-"@ | Out-File -FilePath "cerberus-hydra.code-workspace" -Encoding UTF8
+'@
+
+$workspaceContent | Out-File -FilePath "cerberus-hydra.code-workspace" -Encoding UTF8
 
 Write-Host ""
 Write-Host "🎉 Project structure created successfully!" -ForegroundColor Green
