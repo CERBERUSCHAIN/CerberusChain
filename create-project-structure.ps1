@@ -155,7 +155,7 @@ $gitignoreContent | Out-File -FilePath ".gitignore" -Encoding UTF8
 $readmeContent = @"
 # Cerberus Chain: Hydra
 
-**The Three-Headed Guardian of Memecoin Trading**
+The Three-Headed Guardian of Memecoin Trading
 
 A revolutionary Solana-based meme-coin trading bot built with military precision, transparency, and trust.
 
@@ -166,11 +166,11 @@ Cerberus Chain aims to redefine technological innovation in cryptocurrency tradi
 ## Architecture
 
 Technology Stack:
-- Backend: Rust with actix-web 4.5
-- Frontend: SolidJS with Tailwind CSS
-- Database: PostgreSQL
-- Infrastructure: Docker and DigitalOcean
-- Blockchain: Solana via Helius
+Backend: Rust with actix-web 4.5
+Frontend: SolidJS with Tailwind CSS
+Database: PostgreSQL
+Infrastructure: Docker and DigitalOcean
+Blockchain: Solana via Helius
 
 ## Features
 
@@ -180,78 +180,66 @@ Technology Stack:
 3. Security: On-chain rug-pull filters to protect funds
 
 ### Bot Capabilities:
-- Volume Bot: Continuous SOL-to-token swaps
-- Bundle Bot: Distribute SOL/tokens to wallet bundles
-- Bump Bot: Execute periodic visibility buys
-- Sniper Bot: Immediate token sniping within 2 slots
-- Human Mode: Manual trading with secure JWT gating
+Volume Bot: Continuous SOL-to-token swaps
+Bundle Bot: Distribute SOL/tokens to wallet bundles
+Bump Bot: Execute periodic visibility buys
+Sniper Bot: Immediate token sniping within 2 slots
+Human Mode: Manual trading with secure JWT gating
 
 ## Quick Start
 
 ### Prerequisites
-- Rust 1.70+
-- Node.js 18+
-- PostgreSQL 14+
-- Docker and Docker Compose
+Rust 1.70+
+Node.js 18+
+PostgreSQL 14+
+Docker and Docker Compose
 
 ### Development Setup
 
 1. Clone and setup:
-   ```bash
    cd backend
    cargo build
-   ```
 
 2. Frontend setup:
-   ```bash
    cd frontend
    npm install
    npm run dev
-   ```
 
 3. Database setup:
-   ```bash
    ./scripts/database/setup.sh
-   ```
 
 4. Environment configuration:
-   ```bash
    cp .env.example .env
-   # Edit .env with your configuration
-   ```
+   Edit .env with your configuration
 
 ## Security
 
-- JWT authentication with IP allow-listing
-- Encrypted wallet private keys
-- Rate limiting and DDoS protection
-- Military-grade security protocols
+JWT authentication with IP allow-listing
+Encrypted wallet private keys
+Rate limiting and DDoS protection
+Military-grade security protocols
 
 ## Helius Integration
 
-- 10M credits/month subscription
-- RPC calls, WebSocket streams, Sender API
-- Automatic credit monitoring (90% limit pause)
-- Real-time transaction parsing
+10M credits/month subscription
+RPC calls, WebSocket streams, Sender API
+Automatic credit monitoring (90% limit pause)
+Real-time transaction parsing
 
 ## Deployment
 
 ### Docker Deployment
-```bash
 docker-compose up -d
-```
 
 ### DigitalOcean Deployment
-```bash
 ./scripts/deployment/deploy.sh
-```
 
 ## Monitoring
 
-- Prometheus and Grafana metrics
-- Real-time KPI dashboards
-- Multi-channel notifications (Discord, Telegram, Twitter)
-- Comprehensive logging with ELK stack
+Prometheus and Grafana metrics
+Real-time KPI dashboards
+Multi-channel notifications (Discord, Telegram, Twitter)
+Comprehensive logging with ELK stack
 
 ## Contributing
 
@@ -261,9 +249,7 @@ This is a private project. Access restricted to authorized personnel only.
 
 For support and inquiries: support@cerberuschain.com
 
----
-
-**Built by veterans, for traders. Guarding the future of memecoins.**
+Built by veterans, for traders. Guarding the future of memecoins.
 "@
 
 $readmeContent | Out-File -FilePath "README.md" -Encoding UTF8
@@ -273,14 +259,13 @@ $dockerComposeContent = @"
 version: '3.8'
 
 services:
-  # PostgreSQL Database
   postgres:
     image: postgres:15-alpine
     container_name: cerberus-postgres
     environment:
       POSTGRES_DB: cerberus_hydra
       POSTGRES_USER: cerberus
-      POSTGRES_PASSWORD: `${POSTGRES_PASSWORD}
+      POSTGRES_PASSWORD: secure_password_here
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./database/schemas:/docker-entrypoint-initdb.d
@@ -290,7 +275,6 @@ services:
       - cerberus-network
     restart: unless-stopped
 
-  # Redis Cache
   redis:
     image: redis:7-alpine
     container_name: cerberus-redis
@@ -302,17 +286,16 @@ services:
       - cerberus-network
     restart: unless-stopped
 
-  # Backend API
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
     container_name: cerberus-backend
     environment:
-      DATABASE_URL: postgresql://cerberus:`${POSTGRES_PASSWORD}@postgres:5432/cerberus_hydra
+      DATABASE_URL: postgresql://cerberus:secure_password_here@postgres:5432/cerberus_hydra
       REDIS_URL: redis://redis:6379
-      HELIUS_API_KEY: `${HELIUS_API_KEY}
-      JWT_SECRET: `${JWT_SECRET}
+      HELIUS_API_KEY: your_helius_api_key_here
+      JWT_SECRET: your_jwt_secret_here
       RUST_LOG: info
     ports:
       - "8080:8080"
@@ -325,7 +308,6 @@ services:
     volumes:
       - ./logs:/app/logs
 
-  # Frontend
   frontend:
     build:
       context: ./frontend
@@ -341,7 +323,6 @@ services:
       - cerberus-network
     restart: unless-stopped
 
-  # Nginx Reverse Proxy
   nginx:
     image: nginx:alpine
     container_name: cerberus-nginx
@@ -358,7 +339,6 @@ services:
       - cerberus-network
     restart: unless-stopped
 
-  # Prometheus Monitoring
   prometheus:
     image: prom/prometheus:latest
     container_name: cerberus-prometheus
@@ -371,14 +351,13 @@ services:
       - cerberus-network
     restart: unless-stopped
 
-  # Grafana Dashboard
   grafana:
     image: grafana/grafana:latest
     container_name: cerberus-grafana
     ports:
       - "3001:3000"
     environment:
-      GF_SECURITY_ADMIN_PASSWORD: `${GRAFANA_PASSWORD}
+      GF_SECURITY_ADMIN_PASSWORD: grafana_password_here
     volumes:
       - grafana_data:/var/lib/grafana
       - ./infrastructure/monitoring/grafana:/etc/grafana/provisioning
@@ -471,73 +450,40 @@ authors = ["Tony <tony@cerberuschain.com>", "Dave <dave@cerberuschain.com>"]
 description = "Cerberus Chain: Hydra - Advanced Solana Memecoin Trading Bot Backend"
 
 [dependencies]
-# Web Framework
 actix-web = "4.5"
 actix-web-actors = "4.3"
 actix-cors = "0.7"
 actix-files = "0.6"
-
-# Async Runtime
 tokio = { version = "1.0", features = ["full"] }
 futures = "0.3"
-
-# Serialization
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-
-# Database
 sqlx = { version = "0.7", features = ["runtime-tokio-rustls", "postgres", "chrono", "uuid", "json"] }
-
-# Redis
 redis = { version = "0.24", features = ["tokio-comp"] }
-
-# Authentication and Security
 jsonwebtoken = "9.2"
 bcrypt = "0.15"
 uuid = { version = "1.0", features = ["v4", "serde"] }
-
-# Solana and Blockchain
 solana-sdk = "1.17"
 solana-client = "1.17"
 solana-account-decoder = "1.17"
 anchor-client = "0.29"
-
-# HTTP Client
 reqwest = { version = "0.11", features = ["json", "stream"] }
-
-# WebSocket
 tokio-tungstenite = "0.21"
-
-# Cryptography
 aes-gcm = "0.10"
 rand = "0.8"
 hex = "0.4"
-
-# Configuration
 dotenv = "0.15"
 config = "0.14"
-
-# Logging
 log = "0.4"
 env_logger = "0.11"
 tracing = "0.1"
 tracing-subscriber = "0.3"
-
-# Error Handling
 anyhow = "1.0"
 thiserror = "1.0"
-
-# Time
 chrono = { version = "0.4", features = ["serde"] }
-
-# Utilities
 once_cell = "1.19"
 lazy_static = "1.4"
-
-# Rate Limiting
 governor = "0.6"
-
-# Metrics
 prometheus = "0.13"
 
 [dev-dependencies]
@@ -571,15 +517,11 @@ mod config;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    // Load environment variables
     dotenv().ok();
-    
-    // Initialize logging
     env_logger::init();
     
     log::info!("🐺 Starting Cerberus Chain: Hydra Backend...");
     
-    // Get configuration
     let bind_address = env::var("BIND_ADDRESS").unwrap_or_else(|_| "0.0.0.0:8080".to_string());
     
     log::info!("🚀 Server starting on {}", bind_address);
@@ -590,15 +532,10 @@ async fn main() -> std::io::Result<()> {
             .route("/", web::get().to(health_check))
             .service(
                 web::scope("/api/v1")
-                    // Authentication routes
                     .service(auth::routes())
-                    // Bot control routes
                     .service(api::routes::bot_routes())
-                    // Wallet management routes
                     .service(api::routes::wallet_routes())
-                    // Market data routes
                     .service(api::routes::market_routes())
-                    // WebSocket endpoint
                     .route("/ws", web::get().to(api::handlers::websocket::ws_handler))
             )
     })
@@ -723,36 +660,27 @@ FROM rust:1.75-slim as builder
 
 WORKDIR /app
 
-# Install dependencies
 RUN apt-get update && apt-get install -y \
     pkg-config \
     libssl-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy manifests
 COPY Cargo.toml Cargo.lock ./
-
-# Copy source code
 COPY src ./src
 
-# Build application
 RUN cargo build --release
 
-# Runtime stage
 FROM debian:bookworm-slim
 
 WORKDIR /app
 
-# Install runtime dependencies
 RUN apt-get update && apt-get install -y \
     ca-certificates \
     libssl3 \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy binary from builder stage
 COPY --from=builder /app/target/release/cerberus-hydra-backend /app/
 
-# Create logs directory
 RUN mkdir -p /app/logs
 
 EXPOSE 8080
@@ -768,25 +696,15 @@ FROM node:18-alpine as builder
 
 WORKDIR /app
 
-# Copy package files
 COPY package*.json ./
-
-# Install dependencies
 RUN npm ci
 
-# Copy source code
 COPY . .
-
-# Build application
 RUN npm run build
 
-# Runtime stage
 FROM nginx:alpine
 
-# Copy built assets
 COPY --from=builder /app/dist /usr/share/nginx/html
-
-# Copy nginx configuration
 COPY nginx.conf /etc/nginx/nginx.conf
 
 EXPOSE 3000
