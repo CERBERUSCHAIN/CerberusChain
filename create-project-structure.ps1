@@ -87,7 +87,7 @@ $folders = @(
     "config/environments"
 )
 
-Write-Host "📂 Creating folder structure..." -ForegroundColor Green
+Write-Host "Creating folder structure..." -ForegroundColor Green
 foreach ($folder in $folders) {
     New-Item -ItemType Directory -Path $folder -Force | Out-Null
     Write-Host "  [+] Created: $folder" -ForegroundColor Gray
@@ -104,7 +104,7 @@ function New-FileWithContent {
     Write-Host "  [+] Created: $FilePath" -ForegroundColor Gray
 }
 
-Write-Host "📄 Creating root configuration files..." -ForegroundColor Green
+Write-Host "Creating root configuration files..." -ForegroundColor Green
 
 # .gitignore
 $gitignoreContent = @"
@@ -421,7 +421,7 @@ RUST_BACKTRACE=1
 New-FileWithContent -FilePath ".env.example" -Content $envContent
 
 # Create backend Cargo.toml
-Write-Host "📄 Creating backend Cargo.toml..." -ForegroundColor Green
+Write-Host "Creating backend Cargo.toml..." -ForegroundColor Green
 $cargoContent = @"
 [package]
 name = "cerberus-hydra-backend"
@@ -501,11 +501,11 @@ async fn main() -> std::io::Result<()> {
     dotenv().ok();
     env_logger::init();
     
-    log::info!("🐺 Starting Cerberus Chain: Hydra Backend...");
+    log::info!("Starting Cerberus Chain: Hydra Backend...");
     
     let bind_address = env::var("BIND_ADDRESS").unwrap_or_else(|_| "0.0.0.0:8080".to_string());
     
-    log::info!("🚀 Server starting on {}", bind_address);
+    log::info!("Server starting on {}", bind_address);
     
     HttpServer::new(|| {
         App::new()
@@ -530,7 +530,7 @@ async fn health_check() -> actix_web::Result<impl actix_web::Responder> {
 New-FileWithContent -FilePath "backend/src/main.rs" -Content $mainRsContent
 
 # Create frontend package.json
-Write-Host "📄 Creating frontend package.json..." -ForegroundColor Green
+Write-Host "Creating frontend package.json..." -ForegroundColor Green
 $packageJsonContent = @"
 {
   "name": "cerberus-hydra-frontend",
@@ -598,7 +598,7 @@ $placeholderFiles = @(
     "temp/.gitkeep"
 )
 
-Write-Host "📄 Creating placeholder files..." -ForegroundColor Green
+Write-Host "Creating placeholder files..." -ForegroundColor Green
 foreach ($file in $placeholderFiles) {
     if ($file.EndsWith(".gitkeep")) {
         "" | Out-File -FilePath $file -Encoding UTF8
@@ -611,14 +611,14 @@ foreach ($file in $placeholderFiles) {
 }
 
 Write-Host ""
-Write-Host "🎉 Project structure created successfully!" -ForegroundColor Green
+Write-Host "Project structure created successfully!" -ForegroundColor Green
 Write-Host ""
-Write-Host "📋 Next Steps:" -ForegroundColor Yellow
+Write-Host "Next Steps:" -ForegroundColor Yellow
 Write-Host "  1. Copy .env.example to .env and configure your settings" -ForegroundColor White
 Write-Host "  2. Install Rust dependencies: cd backend; cargo build" -ForegroundColor White
 Write-Host "  3. Install Node.js dependencies: cd frontend; npm install" -ForegroundColor White
 Write-Host "  4. Set up your PostgreSQL database" -ForegroundColor White
 Write-Host "  5. Configure your Helius API key and other secrets" -ForegroundColor White
 Write-Host ""
-Write-Host "🚀 Ready to build the future of memecoin trading!" -ForegroundColor Cyan
-Write-Host "🐺 Cerberus Chain: Hydra - Guarding your investments with military precision" -ForegroundColor Magenta
+Write-Host "Ready to build the future of memecoin trading!" -ForegroundColor Cyan
+Write-Host "Cerberus Chain: Hydra - Guarding your investments with military precision" -ForegroundColor Magenta
