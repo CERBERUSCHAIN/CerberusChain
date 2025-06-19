@@ -159,7 +159,7 @@ database/backups/*
 !database/backups/.gitkeep
 "@
 
-$gitignoreContent | Out-File -FilePath ".gitignore" -Encoding UTF8
+New-FileWithContent -FilePath ".gitignore" -Content $gitignoreContent
 
 # README.md
 $readmeContent = @"
@@ -241,7 +241,7 @@ cp .env.example .env
 
 - 10M credits/month subscription
 - RPC calls, WebSocket streams, Sender API
-- Automatic credit monitoring (90% limit pause)
+- Automatic credit monitoring (90 percent limit pause)
 - Real-time transaction parsing
 
 ## Deployment
@@ -274,7 +274,7 @@ For support and inquiries: support@cerberuschain.com
 Built by veterans, for traders. Guarding the future of memecoins.
 "@
 
-$readmeContent | Out-File -FilePath "README.md" -Encoding UTF8
+New-FileWithContent -FilePath "README.md" -Content $readmeContent
 
 # Docker Compose
 $dockerComposeContent = @"
@@ -354,7 +354,7 @@ networks:
     driver: bridge
 "@
 
-$dockerComposeContent | Out-File -FilePath "docker-compose.yml" -Encoding UTF8
+New-FileWithContent -FilePath "docker-compose.yml" -Content $dockerComposeContent
 
 # Environment template
 $envContent = @"
@@ -411,7 +411,7 @@ RUST_LOG=debug
 RUST_BACKTRACE=1
 "@
 
-$envContent | Out-File -FilePath ".env.example" -Encoding UTF8
+New-FileWithContent -FilePath ".env.example" -Content $envContent
 
 # Create backend Cargo.toml
 Write-Host "📄 Creating backend Cargo.toml..." -ForegroundColor Green
@@ -465,7 +465,7 @@ actix-rt = "2.9"
 actix-test = "0.1"
 "@
 
-$cargoContent | Out-File -FilePath "backend/Cargo.toml" -Encoding UTF8
+New-FileWithContent -FilePath "backend/Cargo.toml" -Content $cargoContent
 
 # Create backend main.rs
 $mainRsContent = @"
@@ -520,7 +520,7 @@ async fn health_check() -> actix_web::Result<impl actix_web::Responder> {
 }
 "@
 
-$mainRsContent | Out-File -FilePath "backend/src/main.rs" -Encoding UTF8
+New-FileWithContent -FilePath "backend/src/main.rs" -Content $mainRsContent
 
 # Create frontend package.json
 Write-Host "📄 Creating frontend package.json..." -ForegroundColor Green
@@ -571,7 +571,7 @@ $packageJsonContent = @"
 }
 "@
 
-$packageJsonContent | Out-File -FilePath "frontend/package.json" -Encoding UTF8
+New-FileWithContent -FilePath "frontend/package.json" -Content $packageJsonContent
 
 # Create placeholder files to ensure directories are tracked
 $placeholderFiles = @(
