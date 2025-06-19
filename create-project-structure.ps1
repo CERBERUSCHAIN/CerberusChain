@@ -165,11 +165,12 @@ Cerberus Chain aims to redefine technological innovation in cryptocurrency tradi
 
 ## Architecture
 
+Technology Stack:
 - Backend: Rust with actix-web 4.5
 - Frontend: SolidJS with Tailwind CSS
 - Database: PostgreSQL
-- Infrastructure: Docker + DigitalOcean
-- Blockchain: Solana (via Helius)
+- Infrastructure: Docker and DigitalOcean
+- Blockchain: Solana via Helius
 
 ## Features
 
