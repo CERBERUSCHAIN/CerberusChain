@@ -83,7 +83,7 @@ $folders = @(
 Write-Host "📂 Creating folder structure..." -ForegroundColor Green
 foreach ($folder in $folders) {
     New-Item -ItemType Directory -Path $folder -Force | Out-Null
-    Write-Host "  ✓ Created: $folder" -ForegroundColor Gray
+    Write-Host "  [+] Created: $folder" -ForegroundColor Gray
 }
 
 # Function to create files with content
@@ -94,7 +94,7 @@ function New-FileWithContent {
     )
     
     $Content | Out-File -FilePath $FilePath -Encoding UTF8
-    Write-Host "  ✓ Created: $FilePath" -ForegroundColor Gray
+    Write-Host "  [+] Created: $FilePath" -ForegroundColor Gray
 }
 
 Write-Host "📄 Creating root configuration files..." -ForegroundColor Green
@@ -600,7 +600,7 @@ foreach ($file in $placeholderFiles) {
     } elseif ($file.EndsWith(".tsx")) {
         "// TODO: Implement component" | Out-File -FilePath $file -Encoding UTF8
     }
-    Write-Host "  ✓ Created: $file" -ForegroundColor Gray
+    Write-Host "  [+] Created: $file" -ForegroundColor Gray
 }
 
 Write-Host ""
