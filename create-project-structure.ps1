@@ -87,7 +87,7 @@ foreach ($folder in $folders) {
 }
 
 # Function to create files with content
-function Create-FileWithContent {
+function New-FileWithContent {
     param(
         [string]$FilePath,
         [string[]]$Content
@@ -159,7 +159,7 @@ $gitignoreLines = @(
     "!database/backups/.gitkeep"
 )
 
-Create-FileWithContent -FilePath ".gitignore" -Content $gitignoreLines
+New-FileWithContent -FilePath ".gitignore" -Content $gitignoreLines
 
 # README.md
 $readmeLines = @(
@@ -185,9 +185,9 @@ $readmeLines = @(
     "## Features",
     "",
     "### The Three Heads of Cerberus:",
-    "1. Strategy: Automated entry and exit rules tailored for memes",
-    "2. Volume: Real-time detection of token volume spikes",
-    "3. Security: On-chain rug-pull filters to protect funds",
+    "- Strategy: Automated entry and exit rules tailored for memes",
+    "- Volume: Real-time detection of token volume spikes",
+    "- Security: On-chain rug-pull filters to protect funds",
     "",
     "### Bot Capabilities:",
     "- Volume Bot: Continuous SOL-to-token swaps",
@@ -206,29 +206,29 @@ $readmeLines = @(
     "",
     "### Development Setup",
     "",
-    "1. Clone and setup:",
-    "   ```bash",
-    "   cd backend",
-    "   cargo build",
-    "   ```",
+    "Clone and setup:",
+    "```bash",
+    "cd backend",
+    "cargo build",
+    "```",
     "",
-    "2. Frontend setup:",
-    "   ```bash",
-    "   cd frontend",
-    "   npm install",
-    "   npm run dev",
-    "   ```",
+    "Frontend setup:",
+    "```bash",
+    "cd frontend",
+    "npm install",
+    "npm run dev",
+    "```",
     "",
-    "3. Database setup:",
-    "   ```bash",
-    "   ./scripts/database/setup.sh",
-    "   ```",
+    "Database setup:",
+    "```bash",
+    "./scripts/database/setup.sh",
+    "```",
     "",
-    "4. Environment configuration:",
-    "   ```bash",
-    "   cp .env.example .env",
-    "   # Edit .env with your configuration",
-    "   ```",
+    "Environment configuration:",
+    "```bash",
+    "cp .env.example .env",
+    "# Edit .env with your configuration",
+    "```",
     "",
     "## Security",
     "",
@@ -274,7 +274,7 @@ $readmeLines = @(
     "Built by veterans, for traders. Guarding the future of memecoins."
 )
 
-Create-FileWithContent -FilePath "README.md" -Content $readmeLines
+New-FileWithContent -FilePath "README.md" -Content $readmeLines
 
 # Docker Compose
 $dockerComposeLines = @(
@@ -354,7 +354,7 @@ $dockerComposeLines = @(
     "    driver: bridge"
 )
 
-Create-FileWithContent -FilePath "docker-compose.yml" -Content $dockerComposeLines
+New-FileWithContent -FilePath "docker-compose.yml" -Content $dockerComposeLines
 
 # Environment template
 $envLines = @(
@@ -411,7 +411,7 @@ $envLines = @(
     "RUST_BACKTRACE=1"
 )
 
-Create-FileWithContent -FilePath ".env.example" -Content $envLines
+New-FileWithContent -FilePath ".env.example" -Content $envLines
 
 # Create backend Cargo.toml
 Write-Host "📄 Creating backend Cargo.toml..." -ForegroundColor Green
@@ -465,7 +465,7 @@ $cargoLines = @(
     'actix-test = "0.1"'
 )
 
-Create-FileWithContent -FilePath "backend/Cargo.toml" -Content $cargoLines
+New-FileWithContent -FilePath "backend/Cargo.toml" -Content $cargoLines
 
 # Create backend main.rs
 $mainRsLines = @(
@@ -520,7 +520,7 @@ $mainRsLines = @(
     "}"
 )
 
-Create-FileWithContent -FilePath "backend/src/main.rs" -Content $mainRsLines
+New-FileWithContent -FilePath "backend/src/main.rs" -Content $mainRsLines
 
 # Create frontend package.json
 Write-Host "📄 Creating frontend package.json..." -ForegroundColor Green
@@ -571,7 +571,7 @@ $packageJsonLines = @(
     "}"
 )
 
-Create-FileWithContent -FilePath "frontend/package.json" -Content $packageJsonLines
+New-FileWithContent -FilePath "frontend/package.json" -Content $packageJsonLines
 
 # Create placeholder files to ensure directories are tracked
 $placeholderFiles = @(
