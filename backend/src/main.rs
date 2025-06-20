@@ -36,8 +36,9 @@ async fn main() -> std::io::Result<()> {
             .allowed_origin("http://localhost:3000")
             .allowed_origin("http://127.0.0.1:5173")
             .allowed_origin("http://127.0.0.1:3000")
-            .allowed_methods(vec!["GET", "POST", "PUT", "DELETE"])
-            .allowed_headers(vec!["Content-Type", "Authorization"])
+            .allowed_methods(vec!["GET", "POST", "PUT", "DELETE", "OPTIONS"])
+            .allowed_headers(vec!["Content-Type", "Authorization", "Accept"])
+            .supports_credentials()
             .max_age(3600);
 
         App::new()
