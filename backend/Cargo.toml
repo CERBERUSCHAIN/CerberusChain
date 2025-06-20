@@ -17,7 +17,8 @@ serde_json = "1.0"
 sqlx = { version = "0.7", features = ["runtime-tokio-rustls", "postgres", "chrono", "uuid", "json"] }
 redis = { version = "0.24", features = ["tokio-comp"] }
 jsonwebtoken = "9.2"
-bcrypt = "0.13"
+# Replace bcrypt with argon2 which is compatible with older zeroize
+argon2 = "0.4"
 uuid = { version = "1.0", features = ["v4", "serde"] }
 solana-sdk = "1.17"
 solana-client = "1.17"
@@ -42,7 +43,7 @@ lazy_static = "1.4"
 governor = "0.6"
 prometheus = "0.13"
 
-# Force compatible zeroize version
+# Force compatible zeroize version for Solana compatibility
 zeroize = "=1.3.0"
 
 [dev-dependencies]
