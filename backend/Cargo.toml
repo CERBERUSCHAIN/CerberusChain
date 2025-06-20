@@ -14,10 +14,11 @@ tokio = { version = "1.0", features = ["full"] }
 futures = "0.3"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
+# Only use PostgreSQL features to avoid MySQL dependencies that conflict with zeroize
 sqlx = { version = "0.7", features = ["runtime-tokio-rustls", "postgres", "chrono", "uuid", "json"] }
 redis = { version = "0.24", features = ["tokio-comp"] }
 jsonwebtoken = "9.2"
-# Replace bcrypt with argon2 which is compatible with older zeroize
+# Use argon2 which is compatible with older zeroize
 argon2 = "0.4"
 uuid = { version = "1.0", features = ["v4", "serde"] }
 solana-sdk = "1.17"
