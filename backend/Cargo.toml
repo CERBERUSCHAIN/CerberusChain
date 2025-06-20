@@ -14,17 +14,27 @@ tokio = { version = "1.0", features = ["full"] }
 futures = "0.3"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-# Only use PostgreSQL features to avoid MySQL dependencies that conflict with zeroize
-sqlx = { version = "0.7", features = ["runtime-tokio-rustls", "postgres", "chrono", "uuid", "json"] }
+
+# Use only PostgreSQL features to avoid MySQL dependencies
+sqlx = { version = "0.7", features = ["runtime-tokio-rustls", "postgres", "chrono", "uuid", "json"], default-features = false }
+
 redis = { version = "0.24", features = ["tokio-comp"] }
 jsonwebtoken = "9.2"
-# Use argon2 which is compatible with older zeroize
-argon2 = "0.4"
+
+# Use password-hash instead of bcrypt to avoid zeroize conflicts
+password-hash = "0.5"
+argon2 = "0.5"
+
 uuid = { version = "1.0", features = ["v4", "serde"] }
-solana-sdk = "1.17"
-solana-client = "1.17"
-solana-account-decoder = "1.17"
-anchor-client = "0.29"
+
+# Use compatible Solana versions that work with zeroize 1.3.0
+solana-sdk = "1.16"
+solana-client = "1.16"
+solana-account-decoder = "1.16"
+
+# Use compatible anchor version
+anchor-client = "0.28"
+
 reqwest = { version = "0.11", features = ["json", "stream"] }
 tokio-tungstenite = "0.21"
 aes-gcm = "0.10"
@@ -44,9 +54,10 @@ lazy_static = "1.4"
 governor = "0.6"
 prometheus = "0.13"
 
-# Force compatible zeroize version for Solana compatibility
-zeroize = "=1.3.0"
-
 [dev-dependencies]
 actix-rt = "2.9"
 actix-test = "0.1"
+
+# Force resolution of conflicting dependencies
+[patch.crates-io]
+zeroize = "=1.3.0"
