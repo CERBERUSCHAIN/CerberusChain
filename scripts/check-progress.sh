@@ -19,14 +19,15 @@ fi
 
 # Step 2: Environment Configuration
 if [ -f ".env" ]; then
-    echo "✅ Step 2A: .env file created"
+    echo "✅ Step 2A: .env file created (20%)"
+    progress=$((progress + 5))
     
     # Check if critical settings are configured
     if grep -q "your_helius_api_key_here" .env; then
         echo "⚠️  Step 2B: Please configure your Helius API key in .env"
     else
         echo "✅ Step 2B: Environment configured (25%)"
-        progress=$((progress + 10))
+        progress=$((progress + 5))
     fi
 else
     echo "❌ Step 2: .env file not found"
@@ -41,7 +42,7 @@ if [ -f "backend/Cargo.lock" ]; then
     rust_deps=true
 fi
 
-if [ -f "frontend/node_modules/.package-lock.json" ] || [ -f "frontend/package-lock.json" ]; then
+if [ -d "frontend/node_modules" ]; then
     echo "✅ Step 3B: Node.js dependencies installed"
     node_deps=true
 fi
@@ -57,9 +58,9 @@ echo ""
 
 if [ $progress -lt 25 ]; then
     echo "🎯 Next: Configure your .env file"
-    echo "   1. Edit .env file in VS Code"
+    echo "   1. Open .env file in VS Code"
     echo "   2. Set your Helius API key"
-    echo "   3. Configure other settings"
+    echo "   3. Configure other critical settings"
 elif [ $progress -lt 40 ]; then
     echo "🎯 Next: Install dependencies"
     echo "   Run: ./scripts/setup.sh"

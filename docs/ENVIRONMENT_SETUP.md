@@ -30,18 +30,18 @@ ALLOWED_IPS=127.0.0.1,your_actual_ip_address_here
 4. Copy your API key
 
 #### **Generate Secure Keys**
-```powershell
-# Generate JWT Secret (run in PowerShell)
-[System.Web.Security.Membership]::GeneratePassword(64, 10)
+```bash
+# Generate JWT Secret (64+ characters)
+openssl rand -base64 64
 
 # Generate Encryption Key (exactly 32 characters)
-[System.Web.Security.Membership]::GeneratePassword(32, 0)
+openssl rand -base64 32 | cut -c1-32
 ```
 
 #### **Find Your IP Address**
-```powershell
+```bash
 # Get your public IP
-Invoke-RestMethod -Uri "https://ipinfo.io/ip"
+curl -s https://ipinfo.io/ip
 ```
 
 ### 🔒 **Security Settings**
