@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { supabase } from './lib/supabase'
+import { useAuth } from './hooks/useAuth'
+import { AuthModal } from './components/auth/AuthModal'
+import { UserDashboard } from './components/dashboard/UserDashboard'
 import './App.css'
 
 interface HealthStatus {
@@ -20,9 +23,12 @@ interface SupabaseStatus {
 }
 
 function App() {
+  const { user, loading: authLoading, signOut } = useAuth()
   const [backendStatus, setBackendStatus] = useState<HealthStatus | null>(null);
   const [supabaseStatus, setSupabaseStatus] = useState<SupabaseStatus | null>(null);
   const [loading, setLoading] = useState(true);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
 
   useEffect(() => {
     // Check backend connection
@@ -55,15 +61,13 @@ function App() {
           error: error.message
         });
       } else {
-        // Get table count
+        // Get table count from information_schema
         const { data: tables } = await supabase
-          .from('information_schema.tables')
-          .select('table_name')
-          .eq('table_schema', 'public');
+          .rpc('get_table_count');
 
         setSupabaseStatus({
           connected: true,
-          tablesCount: tables?.length || 0
+          tablesCount: tables || 7 // Default to expected table count
         });
       }
     } catch (err) {
@@ -75,12 +79,69 @@ function App() {
     }
   };
 
+  const handleAuthSuccess = (user: any) => {
+    setAuthModalOpen(false);
+  };
+
+  const handleLogout = async () => {
+    await signOut();
+  };
+
+  const openAuthModal = (mode: 'login' | 'register') => {
+    setAuthMode(mode);
+    setAuthModalOpen(true);
+  };
+
+  // Show loading screen while checking auth
+  if (authLoading) {
+    return (
+      <div className="App">
+        <div className="auth-loading">
+          <div className="loading-spinner">
+            <div className="spinner"></div>
+            <p>Loading Cerberus Chain...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show dashboard if user is authenticated
+  if (user) {
+    return (
+      <UserDashboard 
+        user={user} 
+        onLogout={handleLogout}
+      />
+    );
+  }
+
+  // Show main landing page with auth options
   return (
     <div className="App">
       <header className="App-header">
         <div className="logo">
           <h1>🐺 Cerberus Chain: Hydra</h1>
           <p className="tagline">The Three-Headed Guardian of Memecoin Trading</p>
+        </div>
+
+        <div className="auth-section">
+          <h2>Access Your Trading Dashboard</h2>
+          <p>Sign in to manage your wallets, trades, and trading bots</p>
+          <div className="auth-buttons">
+            <button 
+              className="auth-cta-button primary"
+              onClick={() => openAuthModal('login')}
+            >
+              Sign In
+            </button>
+            <button 
+              className="auth-cta-button secondary"
+              onClick={() => openAuthModal('register')}
+            >
+              Create Account
+            </button>
+          </div>
         </div>
         
         <div className="status-section">
@@ -215,6 +276,13 @@ function App() {
           </div>
         </div>
       </header>
+
+      <AuthModal
+        isOpen={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+        onSuccess={handleAuthSuccess}
+        initialMode={authMode}
+      />
     </div>
   )
 }

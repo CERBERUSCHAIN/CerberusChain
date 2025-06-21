@@ -27,6 +27,108 @@
   margin-bottom: 3rem;
 }
 
+/* Auth Section */
+.auth-section {
+  margin: 4rem 0;
+  padding: 3rem 2rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(0, 245, 255, 0.2);
+  border-radius: 16px;
+  backdrop-filter: blur(20px);
+}
+
+.auth-section h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  background: linear-gradient(45deg, #00f5ff, #ff0080);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.auth-section p {
+  color: #b8b8d1;
+  margin-bottom: 2rem;
+  font-size: 1.1rem;
+}
+
+.auth-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.auth-cta-button {
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 150px;
+}
+
+.auth-cta-button.primary {
+  background: linear-gradient(135deg, #00f5ff 0%, #ff0080 100%);
+  color: #0a0a0f;
+  box-shadow: 
+    0 10px 30px rgba(0, 245, 255, 0.3),
+    0 0 50px rgba(255, 0, 128, 0.2);
+}
+
+.auth-cta-button.primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 
+    0 15px 40px rgba(0, 245, 255, 0.4),
+    0 0 60px rgba(255, 0, 128, 0.3);
+}
+
+.auth-cta-button.secondary {
+  background: transparent;
+  color: #ffffff;
+  border: 2px solid rgba(0, 245, 255, 0.5);
+}
+
+.auth-cta-button.secondary:hover {
+  background: rgba(0, 245, 255, 0.1);
+  border-color: rgba(0, 245, 255, 0.8);
+  transform: translateY(-3px);
+}
+
+/* Auth Loading */
+.auth-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+}
+
+.auth-loading .loading-spinner {
+  text-align: center;
+}
+
+.auth-loading .spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(0, 245, 255, 0.3);
+  border-top: 4px solid #00f5ff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 1rem;
+}
+
+.auth-loading p {
+  color: #b8b8d1;
+  font-size: 1.2rem;
+  background: linear-gradient(45deg, #00f5ff, #ff0080);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
 .status-section {
   margin: 3rem 0;
 }
@@ -49,7 +151,6 @@
   border: 1px solid rgba(0, 245, 255, 0.3);
   border-radius: 12px;
   padding: 2rem;
-  -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
 }
 
@@ -227,6 +328,16 @@
   .App-header {
     padding: 1rem;
   }
+  
+  .auth-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .auth-cta-button {
+    width: 100%;
+    max-width: 300px;
+  }
 }
 
 /* Animations */
@@ -237,4 +348,8 @@
 
 .status-indicator.healthy {
   animation: glow 2s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
