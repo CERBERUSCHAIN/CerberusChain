@@ -160,6 +160,53 @@
   color: #00f5ff;
 }
 
+.supabase-section {
+  margin: 4rem 0;
+  padding: 2rem;
+  background: rgba(0, 245, 255, 0.05);
+  border-radius: 12px;
+  border: 1px solid rgba(0, 245, 255, 0.3);
+}
+
+.supabase-section h2 {
+  color: #00f5ff;
+  margin-bottom: 2rem;
+}
+
+.supabase-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.supabase-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(0, 245, 255, 0.2);
+  border-radius: 8px;
+  padding: 1.5rem;
+}
+
+.supabase-card h3 {
+  color: #00f5ff;
+  margin-bottom: 1rem;
+}
+
+.supabase-card ul {
+  list-style: none;
+  padding: 0;
+  text-align: left;
+}
+
+.supabase-card li {
+  padding: 0.5rem 0;
+  color: #b8b8d1;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.supabase-card li:last-child {
+  border-bottom: none;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .logo h1 {

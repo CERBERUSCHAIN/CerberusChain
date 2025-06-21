@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { supabase } from './lib/supabase'
 import './App.css'
 
 interface HealthStatus {
@@ -6,10 +7,21 @@ interface HealthStatus {
   service: string;
   version: string;
   timestamp: string;
+  database?: {
+    connected: boolean;
+    stats?: any;
+  };
+}
+
+interface SupabaseStatus {
+  connected: boolean;
+  tablesCount: number;
+  error?: string;
 }
 
 function App() {
   const [backendStatus, setBackendStatus] = useState<HealthStatus | null>(null);
+  const [supabaseStatus, setSupabaseStatus] = useState<SupabaseStatus | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -18,13 +30,50 @@ function App() {
       .then(res => res.json())
       .then((data: HealthStatus) => {
         setBackendStatus(data);
-        setLoading(false);
       })
       .catch(err => {
         console.error('Backend connection failed:', err);
-        setLoading(false);
       });
+
+    // Check Supabase connection
+    checkSupabaseConnection();
+    
+    setLoading(false);
   }, []);
+
+  const checkSupabaseConnection = async () => {
+    try {
+      // Test Supabase connection by checking if we can query the users table
+      const { data, error } = await supabase
+        .from('users')
+        .select('count', { count: 'exact', head: true });
+
+      if (error) {
+        setSupabaseStatus({
+          connected: false,
+          tablesCount: 0,
+          error: error.message
+        });
+      } else {
+        // Get table count
+        const { data: tables } = await supabase
+          .from('information_schema.tables')
+          .select('table_name')
+          .eq('table_schema', 'public');
+
+        setSupabaseStatus({
+          connected: true,
+          tablesCount: tables?.length || 0
+        });
+      }
+    } catch (err) {
+      setSupabaseStatus({
+        connected: false,
+        tablesCount: 0,
+        error: 'Connection failed'
+      });
+    }
+  };
 
   return (
     <div className="App">
@@ -70,6 +119,34 @@ function App() {
                 </div>
               </div>
             </div>
+
+            <div className="status-card">
+              <h3>🗄️ Supabase Database</h3>
+              {loading ? (
+                <div className="loading">Checking...</div>
+              ) : supabaseStatus?.connected ? (
+                <div className="status-healthy">
+                  <div className="status-indicator healthy"></div>
+                  <div>
+                    <div>Status: Connected</div>
+                    <div>Tables: {supabaseStatus.tablesCount}</div>
+                    <div>Type: PostgreSQL</div>
+                  </div>
+                </div>
+              ) : (
+                <div className="status-error">
+                  <div className="status-indicator error"></div>
+                  <div>
+                    <div>Connection Failed</div>
+                    {supabaseStatus?.error && (
+                      <div style={{ fontSize: '0.8rem', color: '#ff6b6b' }}>
+                        {supabaseStatus.error}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
@@ -104,7 +181,36 @@ function App() {
               <strong>Frontend URL:</strong> http://localhost:5173
             </div>
             <div className="info-item">
+              <strong>Supabase URL:</strong> https://bervahrnaauhznctodie.supabase.co
+            </div>
+            <div className="info-item">
               <strong>Status:</strong> Development Mode
+            </div>
+          </div>
+        </div>
+
+        <div className="supabase-section">
+          <h2>🚀 Supabase Integration</h2>
+          <div className="supabase-info">
+            <div className="supabase-card">
+              <h3>Database Schema</h3>
+              <ul>
+                <li>✅ Users table (authentication)</li>
+                <li>✅ Wallets table (Solana wallets)</li>
+                <li>✅ Trades table (transaction history)</li>
+                <li>✅ Bot configs table (trading bots)</li>
+                <li>✅ Sessions table (JWT management)</li>
+              </ul>
+            </div>
+            <div className="supabase-card">
+              <h3>Features Available</h3>
+              <ul>
+                <li>🔐 User authentication</li>
+                <li>💰 Wallet management</li>
+                <li>📊 Real-time data</li>
+                <li>🤖 Bot configuration</li>
+                <li>🔒 Row Level Security</li>
+              </ul>
             </div>
           </div>
         </div>

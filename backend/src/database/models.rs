@@ -4,7 +4,8 @@ use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
 use uuid::Uuid;
 use chrono::{DateTime, Utc};
-use std::collections::HashMap;
+use rust_decimal::Decimal;
+use std::net::IpAddr;
 
 /// User model for authentication and user management
 #[derive(Debug, Clone, Serialize, Deserialize, FromRow)]
@@ -71,7 +72,7 @@ pub struct Wallet {
     pub encrypted_private_key: String,
     pub encryption_nonce: String,
     pub wallet_type: String,
-    pub sol_balance: rust_decimal::Decimal,
+    pub sol_balance: Decimal,
     pub is_active: bool,
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc>,
@@ -92,7 +93,7 @@ pub struct WalletResponse {
     pub name: String,
     pub public_key: String,
     pub wallet_type: String,
-    pub sol_balance: rust_decimal::Decimal,
+    pub sol_balance: Decimal,
     pub is_active: bool,
     pub created_at: DateTime<Utc>,
     pub last_balance_update: Option<DateTime<Utc>>,
@@ -121,9 +122,9 @@ pub struct TokenHolding {
     pub token_address: String,
     pub token_symbol: Option<String>,
     pub token_name: Option<String>,
-    pub balance: rust_decimal::Decimal,
+    pub balance: Decimal,
     pub decimals: i32,
-    pub last_price_sol: Option<rust_decimal::Decimal>,
+    pub last_price_sol: Option<Decimal>,
     pub last_updated: DateTime<Utc>,
 }
 
@@ -136,11 +137,11 @@ pub struct Trade {
     pub token_address: String,
     pub token_symbol: Option<String>,
     pub trade_type: String,
-    pub sol_amount: rust_decimal::Decimal,
-    pub token_amount: Option<rust_decimal::Decimal>,
-    pub price_per_token: Option<rust_decimal::Decimal>,
-    pub slippage_tolerance: Option<rust_decimal::Decimal>,
-    pub priority_fee: Option<rust_decimal::Decimal>,
+    pub sol_amount: Decimal,
+    pub token_amount: Option<Decimal>,
+    pub price_per_token: Option<Decimal>,
+    pub slippage_tolerance: Option<Decimal>,
+    pub priority_fee: Option<Decimal>,
     pub transaction_hash: Option<String>,
     pub signature: Option<String>,
     pub status: String,
@@ -157,9 +158,9 @@ pub struct CreateTradeRequest {
     pub wallet_id: Uuid,
     pub token_address: String,
     pub trade_type: String,
-    pub sol_amount: rust_decimal::Decimal,
-    pub slippage_tolerance: Option<rust_decimal::Decimal>,
-    pub priority_fee: Option<rust_decimal::Decimal>,
+    pub sol_amount: Decimal,
+    pub slippage_tolerance: Option<Decimal>,
+    pub priority_fee: Option<Decimal>,
 }
 
 /// Bot configuration model
@@ -190,7 +191,7 @@ pub struct UserSession {
     pub id: Uuid,
     pub user_id: Uuid,
     pub token_hash: String,
-    pub ip_address: Option<std::net::IpAddr>,
+    pub ip_address: Option<IpAddr>,
     pub user_agent: Option<String>,
     pub created_at: DateTime<Utc>,
     pub expires_at: DateTime<Utc>,
