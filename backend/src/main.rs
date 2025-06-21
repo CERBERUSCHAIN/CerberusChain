@@ -25,9 +25,15 @@ async fn main() -> std::io::Result<()> {
     
     log::info!("🐺 Starting Cerberus Chain: Hydra Backend...");
     
-    // Initialize database connection
+    // Initialize database connection with better error handling
     let database_url = env::var("DATABASE_URL")
-        .unwrap_or_else(|_| "postgresql://postgres:password@db.bervahrnaauhznctodie.supabase.co:5432/postgres".to_string());
+        .unwrap_or_else(|_| {
+            log::warn!("DATABASE_URL not found in environment, using default");
+            "postgresql://postgres:password@localhost:5432/postgres".to_string()
+        });
+    
+    log::info!("📊 Attempting database connection to: {}", 
+        database_url.split('@').nth(1).unwrap_or("unknown"));
     
     let db_pool = match init_db_pool(&database_url).await {
         Ok(pool) => {
@@ -36,15 +42,24 @@ async fn main() -> std::io::Result<()> {
         }
         Err(e) => {
             log::error!("❌ Failed to connect to database: {}", e);
-            log::info!("💡 Make sure DATABASE_URL is correct in your .env file");
-            std::process::exit(1);
+            log::info!("💡 Possible solutions:");
+            log::info!("   1. Check your .env file has the correct DATABASE_URL");
+            log::info!("   2. Verify your internet connection");
+            log::info!("   3. Check if Supabase project is accessible");
+            log::info!("   4. Try using a local PostgreSQL database for development");
+            log::info!("🔄 Starting server without database connection for testing...");
+            
+            // For development, we'll continue without database
+            // In production, you'd want to exit here
+            return start_server_without_db().await;
         }
     };
 
     // Test database connection
     if let Err(e) = health_check(&db_pool).await {
         log::error!("❌ Database health check failed: {}", e);
-        std::process::exit(1);
+        log::info!("🔄 Starting server with limited functionality...");
+        return start_server_without_db().await;
     }
 
     // Initialize authentication service
@@ -61,6 +76,7 @@ async fn main() -> std::io::Result<()> {
     
     log::info!("🚀 Server starting on {}", bind_address);
     log::info!("🔐 JWT expiration: {} hours", token_expiration_hours);
+    log::info!("✅ Database connection: Active");
     
     HttpServer::new(move || {
         let cors = Cors::default()
@@ -82,6 +98,36 @@ async fn main() -> std::io::Result<()> {
             .route("/health", web::get().to(health_check_handler))
             .route("/api/status", web::get().to(api_status_handler))
             .configure(api::configure_routes)
+    })
+    .bind(&bind_address)?
+    .run()
+    .await
+}
+
+// Fallback server without database for development/testing
+async fn start_server_without_db() -> std::io::Result<()> {
+    let bind_address = env::var("BIND_ADDRESS").unwrap_or_else(|_| "0.0.0.0:8080".to_string());
+    
+    log::info!("🚀 Server starting on {} (NO DATABASE)", bind_address);
+    log::warn!("⚠️  Running in limited mode without database connection");
+    
+    HttpServer::new(|| {
+        let cors = Cors::default()
+            .allowed_origin("http://localhost:3000")
+            .allowed_origin("http://localhost:5173")
+            .allowed_origin("http://127.0.0.1:3000")
+            .allowed_origin("http://127.0.0.1:5173")
+            .allowed_methods(vec!["GET", "POST", "PUT", "DELETE", "OPTIONS"])
+            .allowed_headers(vec!["Content-Type", "Authorization", "Accept"])
+            .supports_credentials()
+            .max_age(3600);
+
+        App::new()
+            .wrap(cors)
+            .wrap(Logger::default())
+            .route("/", web::get().to(simple_health_check))
+            .route("/health", web::get().to(simple_health_check))
+            .route("/api/status", web::get().to(simple_api_status))
     })
     .bind(&bind_address)?
     .run()
@@ -130,5 +176,29 @@ async fn api_status_handler(pool: web::Data<sqlx::PgPool>) -> actix_web::Result<
             "trading_history": true,
             "bot_configuration": true
         }
+    })))
+}
+
+// Simple handlers for no-database mode
+async fn simple_health_check() -> actix_web::Result<impl actix_web::Responder> {
+    Ok(web::Json(serde_json::json!({
+        "status": "healthy",
+        "service": "cerberus-hydra-backend",
+        "version": env!("CARGO_PKG_VERSION"),
+        "timestamp": chrono::Utc::now().to_rfc3339(),
+        "database": {
+            "connected": false,
+            "message": "Running without database connection"
+        },
+        "mode": "development"
+    })))
+}
+
+async fn simple_api_status() -> actix_web::Result<impl actix_web::Responder> {
+    Ok(web::Json(serde_json::json!({
+        "backend": "healthy",
+        "database": "disconnected",
+        "mode": "development",
+        "message": "Backend running without database for testing"
     })))
 }
