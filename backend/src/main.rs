@@ -5,6 +5,8 @@ use actix_web::{web, App, HttpServer, middleware::Logger};
 use actix_cors::Cors;
 use dotenv::dotenv;
 use std::env;
+use std::fs;
+use std::path::Path;
 use sqlx::{SqlitePool, sqlite::SqlitePoolOptions};
 
 #[actix_web::main]
@@ -16,9 +18,20 @@ async fn main() -> std::io::Result<()> {
     
     // Get database URL (SQLite file)
     let database_url = env::var("DATABASE_URL")
-        .unwrap_or_else(|_| "sqlite:cerberus_hydra.db".to_string());
+        .unwrap_or_else(|_| "sqlite:data/cerberus_hydra.db".to_string());
     
     log::info!("📊 Using SQLite database: {}", database_url);
+    
+    // Ensure the data directory exists
+    if let Some(db_path) = database_url.strip_prefix("sqlite:") {
+        if let Some(parent) = Path::new(db_path).parent() {
+            if let Err(e) = fs::create_dir_all(parent) {
+                log::error!("❌ Failed to create database directory: {}", e);
+                std::process::exit(1);
+            }
+            log::info!("✅ Database directory ready: {}", parent.display());
+        }
+    }
     
     // Create SQLite connection pool
     let db_pool = match SqlitePoolOptions::new()
@@ -32,6 +45,7 @@ async fn main() -> std::io::Result<()> {
             // Run migrations (create tables)
             if let Err(e) = create_tables(&pool).await {
                 log::error!("❌ Failed to create tables: {}", e);
+                std::process::exit(1);
             } else {
                 log::info!("✅ Database tables ready");
             }
@@ -40,7 +54,21 @@ async fn main() -> std::io::Result<()> {
         }
         Err(e) => {
             log::error!("❌ Failed to connect to SQLite database: {}", e);
-            log::info!("💡 This should not happen with SQLite - check file permissions");
+            log::error!("💡 Database file location: {}", database_url);
+            
+            // Try to provide more helpful error information
+            if let Some(db_path) = database_url.strip_prefix("sqlite:") {
+                let path = Path::new(db_path);
+                if let Some(parent) = path.parent() {
+                    if !parent.exists() {
+                        log::error!("💡 Directory doesn't exist: {}", parent.display());
+                    } else {
+                        log::error!("💡 Directory exists but can't create database file");
+                        log::error!("💡 Check write permissions for: {}", parent.display());
+                    }
+                }
+            }
+            
             std::process::exit(1);
         }
     };
@@ -148,7 +176,14 @@ async fn create_tables(pool: &SqlitePool) -> Result<(), sqlx::Error> {
         )
     "#).execute(pool).await?;
 
+    // Insert a default admin user for testing
+    sqlx::query(r#"
+        INSERT OR IGNORE INTO users (id, username, email, password_hash, is_verified) 
+        VALUES ('admin-001', 'admin', 'admin@cerberuschain.local', 'placeholder_hash', 1)
+    "#).execute(pool).await?;
+
     log::info!("✅ All database tables created successfully");
+    log::info!("✅ Default admin user created (username: admin)");
     Ok(())
 }
 
@@ -167,7 +202,7 @@ async fn health_check_handler(pool: web::Data<SqlitePool>) -> actix_web::Result<
         "database": {
             "type": "SQLite",
             "connected": db_healthy,
-            "file": "cerberus_hydra.db"
+            "file": "data/cerberus_hydra.db"
         },
         "heads": {
             "strategy": "ready",
