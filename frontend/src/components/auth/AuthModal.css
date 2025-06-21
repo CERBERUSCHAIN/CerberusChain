@@ -40,12 +40,15 @@
   justify-content: center;
   transition: all 0.3s ease;
   z-index: 10;
+  /* Fix positioning - move it inside the modal properly */
+  transform: translate(50%, -50%);
 }
 
 .auth-modal-close:hover {
   background: rgba(255, 68, 68, 0.2);
   border-color: rgba(255, 68, 68, 0.5);
   color: #ff4444;
+  transform: translate(50%, -50%) scale(1.1);
 }
 
 @keyframes modalSlideIn {
@@ -67,5 +70,13 @@
   
   .auth-modal-content {
     max-height: 95vh;
+  }
+  
+  .auth-modal-close {
+    top: 0.75rem;
+    right: 0.75rem;
+    width: 28px;
+    height: 28px;
+    font-size: 0.875rem;
   }
 }
