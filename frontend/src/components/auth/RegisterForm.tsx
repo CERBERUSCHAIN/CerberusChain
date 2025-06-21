@@ -115,6 +115,15 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess, onSwitchT
     return 'Strong'
   }
 
+  const strengthBarStyle = {
+    width: `${(passwordStrength / 5) * 100}%`,
+    backgroundColor: getStrengthColor()
+  }
+
+  const strengthTextStyle = {
+    color: getStrengthColor()
+  }
+
   return (
     <div className="auth-form">
       <div className="auth-header">
@@ -177,15 +186,12 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess, onSwitchT
               <div className="strength-bar">
                 <div 
                   className="strength-fill"
-                  style={{
-                    width: `${(passwordStrength / 5) * 100}%`,
-                    backgroundColor: getStrengthColor()
-                  }}
+                  style={strengthBarStyle}
                 ></div>
               </div>
               <span 
                 className="strength-text"
-                style={{ color: getStrengthColor() }}
+                style={strengthTextStyle}
               >
                 {getStrengthText()}
               </span>
