@@ -6,6 +6,7 @@
   border-radius: 16px;
   padding: 2rem;
   backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   box-shadow: 
     0 20px 40px rgba(0, 0, 0, 0.3),
     0 0 50px rgba(0, 245, 255, 0.1);
