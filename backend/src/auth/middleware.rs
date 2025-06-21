@@ -64,11 +64,12 @@ where
 
     fn call(&self, req: ServiceRequest) -> Self::Future {
         let jwt_secret = self.jwt_secret.clone();
+        let service = self.service.clone();
 
         // Skip authentication for public routes
         let path = req.path();
         if path == "/health" || path == "/" || path.starts_with("/api/auth/") {
-            let fut = self.service.call(req);
+            let fut = service.call(req);
             return Box::pin(async move { fut.await });
         }
 
@@ -82,29 +83,22 @@ where
                         // Add user info to request extensions
                         req.extensions_mut().insert(claims);
                         
-                        let fut = self.service.call(req);
+                        let fut = service.call(req);
                         return Box::pin(async move { fut.await });
                     }
                 }
             }
         }
 
-        // Authentication failed - create proper error response
+        // Authentication failed - return error
         Box::pin(async move {
-            let response = HttpResponse::Unauthorized()
-                .json(serde_json::json!({
-                    "success": false,
-                    "error": "Authentication required"
-                }));
-            
-            Ok(req.into_response(response))
+            Err(actix_web::error::ErrorUnauthorized("Authentication required"))
         })
     }
 }
 
 /// Extract authenticated user from request
 pub async fn get_authenticated_user(req: &ServiceRequest, pool: &PgPool) -> Result<User, Error> {
-    // Get extensions and store in a variable to extend lifetime
     let extensions = req.extensions();
     let claims = extensions.get::<crate::database::models::Claims>()
         .ok_or_else(|| actix_web::error::ErrorUnauthorized("No authentication claims found"))?;
