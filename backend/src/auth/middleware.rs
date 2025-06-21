@@ -26,7 +26,7 @@ impl AuthMiddleware {
 
 impl<S, B> Transform<S, ServiceRequest> for AuthMiddleware
 where
-    S: Service<ServiceRequest, Response = ServiceResponse<B>, Error = Error>,
+    S: Service<ServiceRequest, Response = ServiceResponse<B>, Error = Error> + Clone + 'static,
     S::Future: 'static,
     B: 'static,
 {
@@ -52,7 +52,7 @@ pub struct AuthMiddlewareService<S> {
 
 impl<S, B> Service<ServiceRequest> for AuthMiddlewareService<S>
 where
-    S: Service<ServiceRequest, Response = ServiceResponse<B>, Error = Error>,
+    S: Service<ServiceRequest, Response = ServiceResponse<B>, Error = Error> + Clone + 'static,
     S::Future: 'static,
     B: 'static,
 {
@@ -90,16 +90,14 @@ where
         }
 
         // Authentication failed - create proper error response
-        let service = self.service.clone();
         Box::pin(async move {
-            let (req, _payload) = req.into_parts();
             let response = HttpResponse::Unauthorized()
                 .json(serde_json::json!({
                     "success": false,
                     "error": "Authentication required"
                 }));
             
-            Ok(ServiceResponse::new(req, response))
+            Ok(req.into_response(response))
         })
     }
 }
