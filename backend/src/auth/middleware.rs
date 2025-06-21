@@ -91,23 +91,24 @@ where
             }
         }
 
-        // Authentication failed
+        // Authentication failed - return proper error response
         Box::pin(async move {
-            Ok(req.into_response(
-                HttpResponse::Unauthorized()
-                    .json(serde_json::json!({
-                        "success": false,
-                        "error": "Authentication required"
-                    }))
-                    .into_body(),
-            ))
+            let response = HttpResponse::Unauthorized()
+                .json(serde_json::json!({
+                    "success": false,
+                    "error": "Authentication required"
+                }));
+            
+            Ok(req.into_response(response))
         })
     }
 }
 
 /// Extract authenticated user from request
 pub async fn get_authenticated_user(req: &ServiceRequest, pool: &PgPool) -> Result<User, Error> {
-    let claims = req.extensions().get::<crate::database::models::Claims>()
+    // Get extensions and store in a variable to extend lifetime
+    let extensions = req.extensions();
+    let claims = extensions.get::<crate::database::models::Claims>()
         .ok_or_else(|| actix_web::error::ErrorUnauthorized("No authentication claims found"))?;
 
     let user_id = Uuid::parse_str(&claims.sub)
