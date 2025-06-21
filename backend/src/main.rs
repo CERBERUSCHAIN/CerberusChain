@@ -16,27 +16,41 @@ async fn main() -> std::io::Result<()> {
     
     log::info!("🐺 Starting Cerberus Chain: Hydra Backend (SQLite Version)...");
     
-    // Use current directory for SQLite database (most reliable)
+    // Use data directory for SQLite database (better organization)
     let database_url = env::var("DATABASE_URL")
-        .unwrap_or_else(|_| "sqlite:cerberus_hydra.db".to_string());
+        .unwrap_or_else(|_| "sqlite:data/cerberus_hydra.db".to_string());
     
     log::info!("📊 Using SQLite database: {}", database_url);
     
-    // Get current working directory for debugging
-    match env::current_dir() {
-        Ok(cwd) => log::info!("📁 Current working directory: {}", cwd.display()),
-        Err(e) => log::warn!("⚠️  Could not get current directory: {}", e),
+    // Ensure data directory exists
+    if let Some(db_path) = database_url.strip_prefix("sqlite:") {
+        let path = Path::new(db_path);
+        if let Some(parent) = path.parent() {
+            if !parent.exists() {
+                match fs::create_dir_all(parent) {
+                    Ok(_) => log::info!("✅ Created database directory: {}", parent.display()),
+                    Err(e) => {
+                        log::error!("❌ Failed to create database directory: {}", e);
+                        std::process::exit(1);
+                    }
+                }
+            } else {
+                log::info!("✅ Database directory exists: {}", parent.display());
+            }
+        }
     }
     
-    // Test write permissions by creating a test file
-    match fs::write("test_permissions.tmp", "test") {
+    // Test write permissions in the data directory
+    let test_file = "data/test_permissions.tmp";
+    match fs::write(test_file, "test") {
         Ok(_) => {
-            log::info!("✅ Write permissions confirmed");
-            let _ = fs::remove_file("test_permissions.tmp");
+            log::info!("✅ Write permissions confirmed in data directory");
+            let _ = fs::remove_file(test_file);
         }
         Err(e) => {
-            log::error!("❌ No write permissions in current directory: {}", e);
-            log::error!("💡 Try running from a different directory or as administrator");
+            log::error!("❌ No write permissions in data directory: {}", e);
+            log::error!("💡 Try running: chmod 755 data");
+            log::error!("💡 Or run as administrator");
             std::process::exit(1);
         }
     }
@@ -48,14 +62,14 @@ async fn main() -> std::io::Result<()> {
         .await
     {
         Ok(pool) => {
-            log::info!("✅ SQLite database connected");
+            log::info!("✅ SQLite database connected successfully!");
             
             // Run migrations (create tables)
             if let Err(e) = create_tables(&pool).await {
                 log::error!("❌ Failed to create tables: {}", e);
                 std::process::exit(1);
             } else {
-                log::info!("✅ Database tables ready");
+                log::info!("✅ Database tables created successfully");
             }
             
             pool
@@ -64,32 +78,14 @@ async fn main() -> std::io::Result<()> {
             log::error!("❌ Failed to connect to SQLite database: {}", e);
             log::error!("💡 Database URL: {}", database_url);
             
-            // More detailed error diagnosis
-            if let Some(db_path) = database_url.strip_prefix("sqlite:") {
-                let path = Path::new(db_path);
-                log::error!("💡 Database file path: {}", path.display());
-                
-                if let Some(parent) = path.parent() {
-                    if parent.as_os_str().is_empty() {
-                        log::info!("💡 Using current directory for database");
-                    } else if !parent.exists() {
-                        log::error!("💡 Parent directory doesn't exist: {}", parent.display());
-                    } else {
-                        log::error!("💡 Parent directory exists but can't create file");
-                    }
-                }
-                
-                // Check if file already exists but is locked
-                if path.exists() {
-                    log::error!("💡 Database file exists but may be locked or corrupted");
-                    log::error!("💡 Try deleting: {}", path.display());
-                }
+            // Check if it's a permissions issue
+            if e.to_string().contains("unable to open database file") {
+                log::error!("💡 This is likely a file permissions issue");
+                log::error!("💡 Solutions:");
+                log::error!("   1. Run: chmod 755 data");
+                log::error!("   2. Run PowerShell as Administrator");
+                log::error!("   3. Try a different directory");
             }
-            
-            log::error!("💡 Possible solutions:");
-            log::error!("   1. Run as administrator");
-            log::error!("   2. Change to a different directory");
-            log::error!("   3. Check antivirus software blocking file creation");
             
             std::process::exit(1);
         }
@@ -100,6 +96,7 @@ async fn main() -> std::io::Result<()> {
     log::info!("🚀 Server starting on {}", bind_address);
     log::info!("✅ SQLite database: Ready");
     log::info!("✅ No network dependencies");
+    log::info!("🎯 Visit: http://localhost:8080");
     
     HttpServer::new(move || {
         let cors = Cors::default()
@@ -125,6 +122,8 @@ async fn main() -> std::io::Result<()> {
 }
 
 async fn create_tables(pool: &SqlitePool) -> Result<(), sqlx::Error> {
+    log::info!("📊 Creating database tables...");
+    
     // Create users table
     sqlx::query(r#"
         CREATE TABLE IF NOT EXISTS users (
@@ -216,6 +215,12 @@ async fn health_check_handler(pool: web::Data<SqlitePool>) -> actix_web::Result<
         .await
         .is_ok();
 
+    // Get user count for verification
+    let user_count = sqlx::query_scalar::<_, i64>("SELECT COUNT(*) FROM users")
+        .fetch_one(pool.get_ref())
+        .await
+        .unwrap_or(0);
+
     Ok(web::Json(serde_json::json!({
         "status": "healthy",
         "service": "cerberus-hydra-backend",
@@ -224,14 +229,15 @@ async fn health_check_handler(pool: web::Data<SqlitePool>) -> actix_web::Result<
         "database": {
             "type": "SQLite",
             "connected": db_healthy,
-            "file": "cerberus_hydra.db"
+            "file": "data/cerberus_hydra.db",
+            "users": user_count
         },
         "heads": {
             "strategy": "ready",
             "volume": "ready", 
             "security": "ready"
         },
-        "message": "Simple local setup - no network dependencies!"
+        "message": "Local SQLite setup - no network dependencies!"
     })))
 }
 
