@@ -15,23 +15,26 @@ This setup eliminates ALL network dependencies and Supabase connection issues. E
 ## 🚀 Quick Start
 
 ### 1. Initial Setup (Run Once)
+
 ```powershell
 .\setup-complete-local.ps1
 ```
 
 ### 2. Daily Development
+
 ```powershell
 .\start-local-dev.ps1
 ```
 
 ### 3. Access the Application
-- **Frontend**: http://localhost:3000
-- **Backend API**: http://localhost:8080
+
+- **Frontend**: <http://localhost:3000>
+- **Backend API**: <http://localhost:8080>
 - **Database**: localhost:5432
 
 ## 🔐 Default Credentials
 
-- **Admin User**: 
+- **Admin User**:
   - Username: `admin`
   - Password: `CerberusAdmin2024!`
 
@@ -88,6 +91,7 @@ The local database includes all necessary tables:
 ## 🔧 Troubleshooting
 
 ### Database Won't Start
+
 ```powershell
 # Check Docker is running
 docker --version
@@ -99,6 +103,7 @@ docker ps -a
 ```
 
 ### Backend Connection Issues
+
 ```powershell
 # Check .env file exists
 Get-Content .env
@@ -108,6 +113,7 @@ docker exec cerberus-postgres pg_isready -U cerberus -d cerberus_hydra
 ```
 
 ### Frontend Issues
+
 ```powershell
 # Install dependencies
 cd frontend
@@ -121,7 +127,7 @@ npm run dev
 
 1. **Run the setup**: `.\setup-complete-local.ps1`
 2. **Start development**: `.\start-local-dev.ps1`
-3. **Open browser**: http://localhost:3000
+3. **Open browser**: <http://localhost:3000>
 4. **Login with admin credentials**
 5. **Start building your trading bot features!**
 
