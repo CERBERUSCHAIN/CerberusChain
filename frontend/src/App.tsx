@@ -44,7 +44,7 @@ function App() {
   const checkSupabaseConnection = async () => {
     try {
       // Test Supabase connection by checking if we can query the users table
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('users')
         .select('count', { count: 'exact', head: true });
 
@@ -139,7 +139,7 @@ function App() {
                   <div>
                     <div>Connection Failed</div>
                     {supabaseStatus?.error && (
-                      <div style={{ fontSize: '0.8rem', color: '#ff6b6b' }}>
+                      <div className="error-details">
                         {supabaseStatus.error}
                       </div>
                     )}
