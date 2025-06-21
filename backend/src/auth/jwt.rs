@@ -5,6 +5,7 @@ use jsonwebtoken::{encode, decode, Header, Validation, EncodingKey, DecodingKey}
 use anyhow::{Result, anyhow};
 use uuid::Uuid;
 use chrono::{Utc, Duration};
+use sha2::{Sha256, Digest};
 
 /// Generate JWT token for authenticated user
 pub fn generate_jwt_token(
@@ -66,7 +67,6 @@ pub fn extract_token_from_header(auth_header: &str) -> Result<&str> {
 
 /// Generate session ID hash for database storage
 pub fn hash_session_token(token: &str) -> String {
-    use sha2::{Sha256, Digest};
     let mut hasher = Sha256::new();
     hasher.update(token.as_bytes());
     hex::encode(hasher.finalize())

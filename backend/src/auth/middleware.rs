@@ -5,9 +5,8 @@ use actix_web::{
     Error, HttpMessage, HttpResponse,
 };
 use futures::future::{ok, Ready};
-use std::future::{Future};
+use std::future::Future;
 use std::pin::Pin;
-use std::task::{Context, Poll};
 use sqlx::PgPool;
 use uuid::Uuid;
 
@@ -90,15 +89,17 @@ where
             }
         }
 
-        // Authentication failed - return proper error response
+        // Authentication failed - create proper error response
+        let service = self.service.clone();
         Box::pin(async move {
+            let (req, _payload) = req.into_parts();
             let response = HttpResponse::Unauthorized()
                 .json(serde_json::json!({
                     "success": false,
                     "error": "Authentication required"
                 }));
             
-            Ok(req.into_response(response))
+            Ok(ServiceResponse::new(req, response))
         })
     }
 }
