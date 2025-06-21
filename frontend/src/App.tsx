@@ -79,7 +79,7 @@ function App() {
     }
   };
 
-  const handleAuthSuccess = (user: any) => {
+  const handleAuthSuccess = () => {
     setAuthModalOpen(false);
   };
 
