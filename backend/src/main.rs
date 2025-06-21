@@ -16,24 +16,32 @@ async fn main() -> std::io::Result<()> {
     
     log::info!("🐺 Starting Cerberus Chain: Hydra Backend (SQLite Version)...");
     
-    // Get database URL (SQLite file)
+    // Use current directory for SQLite database (most reliable)
     let database_url = env::var("DATABASE_URL")
-        .unwrap_or_else(|_| "sqlite:data/cerberus_hydra.db".to_string());
+        .unwrap_or_else(|_| "sqlite:cerberus_hydra.db".to_string());
     
     log::info!("📊 Using SQLite database: {}", database_url);
     
-    // Ensure the data directory exists
-    if let Some(db_path) = database_url.strip_prefix("sqlite:") {
-        if let Some(parent) = Path::new(db_path).parent() {
-            if let Err(e) = fs::create_dir_all(parent) {
-                log::error!("❌ Failed to create database directory: {}", e);
-                std::process::exit(1);
-            }
-            log::info!("✅ Database directory ready: {}", parent.display());
+    // Get current working directory for debugging
+    match env::current_dir() {
+        Ok(cwd) => log::info!("📁 Current working directory: {}", cwd.display()),
+        Err(e) => log::warn!("⚠️  Could not get current directory: {}", e),
+    }
+    
+    // Test write permissions by creating a test file
+    match fs::write("test_permissions.tmp", "test") {
+        Ok(_) => {
+            log::info!("✅ Write permissions confirmed");
+            let _ = fs::remove_file("test_permissions.tmp");
+        }
+        Err(e) => {
+            log::error!("❌ No write permissions in current directory: {}", e);
+            log::error!("💡 Try running from a different directory or as administrator");
+            std::process::exit(1);
         }
     }
     
-    // Create SQLite connection pool
+    // Create SQLite connection pool with better error handling
     let db_pool = match SqlitePoolOptions::new()
         .max_connections(5)
         .connect(&database_url)
@@ -54,20 +62,34 @@ async fn main() -> std::io::Result<()> {
         }
         Err(e) => {
             log::error!("❌ Failed to connect to SQLite database: {}", e);
-            log::error!("💡 Database file location: {}", database_url);
+            log::error!("💡 Database URL: {}", database_url);
             
-            // Try to provide more helpful error information
+            // More detailed error diagnosis
             if let Some(db_path) = database_url.strip_prefix("sqlite:") {
                 let path = Path::new(db_path);
+                log::error!("💡 Database file path: {}", path.display());
+                
                 if let Some(parent) = path.parent() {
-                    if !parent.exists() {
-                        log::error!("💡 Directory doesn't exist: {}", parent.display());
+                    if parent.as_os_str().is_empty() {
+                        log::info!("💡 Using current directory for database");
+                    } else if !parent.exists() {
+                        log::error!("💡 Parent directory doesn't exist: {}", parent.display());
                     } else {
-                        log::error!("💡 Directory exists but can't create database file");
-                        log::error!("💡 Check write permissions for: {}", parent.display());
+                        log::error!("💡 Parent directory exists but can't create file");
                     }
                 }
+                
+                // Check if file already exists but is locked
+                if path.exists() {
+                    log::error!("💡 Database file exists but may be locked or corrupted");
+                    log::error!("💡 Try deleting: {}", path.display());
+                }
             }
+            
+            log::error!("💡 Possible solutions:");
+            log::error!("   1. Run as administrator");
+            log::error!("   2. Change to a different directory");
+            log::error!("   3. Check antivirus software blocking file creation");
             
             std::process::exit(1);
         }
@@ -202,7 +224,7 @@ async fn health_check_handler(pool: web::Data<SqlitePool>) -> actix_web::Result<
         "database": {
             "type": "SQLite",
             "connected": db_healthy,
-            "file": "data/cerberus_hydra.db"
+            "file": "cerberus_hydra.db"
         },
         "heads": {
             "strategy": "ready",
