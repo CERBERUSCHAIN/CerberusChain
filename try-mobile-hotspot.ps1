@@ -20,8 +20,7 @@ Write-Host "   • Look for your phone's hotspot in WiFi settings" -ForegroundCo
 Write-Host "   • Connect to it" -ForegroundColor Gray
 Write-Host ""
 Write-Host "3. 🧪 Test the connection" -ForegroundColor White
-Write-Host "   • Run this script to test: .\test-supabase-connection.ps1" -ForegroundColor Gray
-Write-Host "   • Or directly: cd backend && cargo run" -ForegroundColor Gray
+Write-Host "   • Run: cd backend && cargo run" -ForegroundColor Gray
 Write-Host ""
 
 Write-Host "🔍 Testing current network connectivity..." -ForegroundColor Yellow

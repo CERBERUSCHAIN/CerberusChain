@@ -8,6 +8,8 @@ use actix_web::{web, App, HttpServer, middleware::Logger};
 use actix_cors::Cors;
 use dotenv::dotenv;
 use std::env;
+use sqlx::{PgPool, postgres::PgPoolOptions};
+use std::time::Duration;
 
 mod auth;
 mod api;
@@ -16,7 +18,7 @@ mod utils;
 mod config;
 
 use auth::AuthService;
-use database::{init_db_pool, health_check, get_db_stats};
+use database::{health_check, get_db_stats};
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -25,7 +27,7 @@ async fn main() -> std::io::Result<()> {
     
     log::info!("🐺 Starting Cerberus Chain: Hydra Backend...");
     
-    // Initialize database connection with better error handling
+    // Get database URL
     let database_url = env::var("DATABASE_URL")
         .unwrap_or_else(|_| {
             log::warn!("DATABASE_URL not found in environment, using default");
@@ -35,10 +37,23 @@ async fn main() -> std::io::Result<()> {
     log::info!("📊 Attempting database connection to: {}", 
         database_url.split('@').nth(1).unwrap_or("unknown"));
     
-    let db_pool = match init_db_pool(&database_url).await {
+    // Create connection pool with better timeout settings
+    let db_pool = match create_optimized_pool(&database_url).await {
         Ok(pool) => {
             log::info!("✅ Database connection established");
-            pool
+            
+            // Test the connection
+            match health_check(&pool).await {
+                Ok(_) => {
+                    log::info!("✅ Database health check passed");
+                    pool
+                }
+                Err(e) => {
+                    log::error!("❌ Database health check failed: {}", e);
+                    log::info!("🔄 Starting server with limited functionality...");
+                    return start_server_without_db().await;
+                }
+            }
         }
         Err(e) => {
             log::error!("❌ Failed to connect to database: {}", e);
@@ -49,18 +64,9 @@ async fn main() -> std::io::Result<()> {
             log::info!("   4. Try using a local PostgreSQL database for development");
             log::info!("🔄 Starting server without database connection for testing...");
             
-            // For development, we'll continue without database
-            // In production, you'd want to exit here
             return start_server_without_db().await;
         }
     };
-
-    // Test database connection
-    if let Err(e) = health_check(&db_pool).await {
-        log::error!("❌ Database health check failed: {}", e);
-        log::info!("🔄 Starting server with limited functionality...");
-        return start_server_without_db().await;
-    }
 
     // Initialize authentication service
     let jwt_secret = env::var("JWT_SECRET")
@@ -102,6 +108,19 @@ async fn main() -> std::io::Result<()> {
     .bind(&bind_address)?
     .run()
     .await
+}
+
+// Create optimized connection pool with better timeout settings
+async fn create_optimized_pool(database_url: &str) -> Result<PgPool, sqlx::Error> {
+    PgPoolOptions::new()
+        .max_connections(5)  // Reduced from default to avoid overwhelming Supabase
+        .min_connections(1)  // Keep at least one connection
+        .acquire_timeout(Duration::from_secs(30))  // 30 seconds to get a connection
+        .idle_timeout(Duration::from_secs(300))    // 5 minutes idle timeout
+        .max_lifetime(Duration::from_secs(1800))   // 30 minutes max lifetime
+        .test_before_acquire(true)  // Test connections before use
+        .connect(database_url)
+        .await
 }
 
 // Fallback server without database for development/testing
