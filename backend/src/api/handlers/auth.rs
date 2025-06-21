@@ -1,12 +1,13 @@
 //! Authentication handlers
 
-use actix_web::{web, HttpRequest, HttpResponse, Result};
+use actix_web::{web, HttpRequest, HttpResponse, Result, HttpMessage};
 use sqlx::PgPool;
 use uuid::Uuid;
 use chrono::Utc;
+use std::net::IpAddr;
 
 use crate::database::models::{
-    User, CreateUserRequest, LoginRequest, UserResponse, ApiResponse, UserSession
+    User, CreateUserRequest, LoginRequest, UserResponse, ApiResponse
 };
 use crate::auth::{AuthService, hash_session_token};
 
@@ -175,6 +176,9 @@ pub async fn login(
 
     let expires_at = Utc::now() + chrono::Duration::hours(24);
 
+    // Convert IpAddr to string for database storage
+    let ip_string = ip_address.map(|ip| ip.to_string());
+
     let _ = sqlx::query(
         r#"
         INSERT INTO user_sessions (id, user_id, token_hash, ip_address, user_agent, expires_at)
@@ -184,7 +188,7 @@ pub async fn login(
     .bind(session_id)
     .bind(user.id)
     .bind(&token_hash)
-    .bind(ip_address)
+    .bind(ip_string)
     .bind(user_agent)
     .bind(expires_at)
     .execute(pool.get_ref())
@@ -230,9 +234,9 @@ pub async fn logout(
 
 /// Refresh JWT token
 pub async fn refresh_token(
-    pool: web::Data<PgPool>,
-    auth_service: web::Data<AuthService>,
-    http_req: HttpRequest,
+    _pool: web::Data<PgPool>,
+    _auth_service: web::Data<AuthService>,
+    _http_req: HttpRequest,
 ) -> Result<HttpResponse> {
     // This would implement token refresh logic
     // For now, return not implemented

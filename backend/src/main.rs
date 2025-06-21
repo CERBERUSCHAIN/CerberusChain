@@ -4,8 +4,8 @@
 //! The three-headed guardian protecting your memecoin investments
 //! with military precision, transparency, and trust.
 
-use actix_web::{web, App, HttpServer, middleware::Logger, middleware::Cors};
-use actix_cors::Cors as ActixCors;
+use actix_web::{web, App, HttpServer, middleware::Logger};
+use actix_cors::Cors;
 use dotenv::dotenv;
 use std::env;
 use anyhow::Result;
@@ -64,7 +64,7 @@ async fn main() -> std::io::Result<()> {
     log::info!("🔐 JWT expiration: {} hours", token_expiration_hours);
     
     HttpServer::new(move || {
-        let cors = ActixCors::default()
+        let cors = Cors::default()
             .allowed_origin("http://localhost:3000")
             .allowed_origin("http://localhost:5173")
             .allowed_origin("http://127.0.0.1:3000")

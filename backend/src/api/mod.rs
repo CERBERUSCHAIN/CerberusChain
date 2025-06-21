@@ -1,11 +1,7 @@
 //! API module for Cerberus Chain: Hydra
 //! Contains all HTTP endpoints and route handlers
 
-pub mod routes;
 pub mod handlers;
-
-pub use routes::*;
-pub use handlers::*;
 
 use actix_web::web;
 

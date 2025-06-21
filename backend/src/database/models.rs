@@ -5,7 +5,6 @@ use sqlx::FromRow;
 use uuid::Uuid;
 use chrono::{DateTime, Utc};
 use rust_decimal::Decimal;
-use std::net::IpAddr;
 
 /// User model for authentication and user management
 #[derive(Debug, Clone, Serialize, Deserialize, FromRow)]
@@ -183,19 +182,6 @@ pub struct CreateBotConfigRequest {
     pub bot_type: String,
     pub name: String,
     pub config: serde_json::Value,
-}
-
-/// User session model for JWT management
-#[derive(Debug, Clone, Serialize, Deserialize, FromRow)]
-pub struct UserSession {
-    pub id: Uuid,
-    pub user_id: Uuid,
-    pub token_hash: String,
-    pub ip_address: Option<IpAddr>,
-    pub user_agent: Option<String>,
-    pub created_at: DateTime<Utc>,
-    pub expires_at: DateTime<Utc>,
-    pub is_active: bool,
 }
 
 /// JWT claims structure
