@@ -3,7 +3,6 @@
 
 pub mod connection;
 pub mod models;
-pub mod migrations;
 
 pub use connection::*;
 pub use models::*;
@@ -14,9 +13,6 @@ use anyhow::Result;
 /// Initialize the database connection pool
 pub async fn init_db_pool(database_url: &str) -> Result<PgPool> {
     let pool = PgPool::connect(database_url).await?;
-    
-    // Run migrations
-    sqlx::migrate!("./database/migrations").run(&pool).await?;
     
     log::info!("Database connection pool initialized successfully");
     Ok(pool)

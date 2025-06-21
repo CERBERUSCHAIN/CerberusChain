@@ -18,7 +18,7 @@ impl Default for DatabaseConfig {
     fn default() -> Self {
         Self {
             url: std::env::var("DATABASE_URL")
-                .unwrap_or_else(|_| "postgresql://cerberus:password@localhost:5432/cerberus_hydra".to_string()),
+                .unwrap_or_else(|_| "postgresql://postgres:password@db.bervahrnaauhznctodie.supabase.co:5432/postgres".to_string()),
             max_connections: 20,
             min_connections: 5,
             connect_timeout: Duration::from_secs(30),

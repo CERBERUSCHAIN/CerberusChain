@@ -14,6 +14,7 @@ use anyhow::Result;
 use uuid::Uuid;
 
 /// Authentication service
+#[derive(Clone)]
 pub struct AuthService {
     jwt_secret: String,
     token_expiration_hours: u64,

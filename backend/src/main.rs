@@ -4,19 +4,15 @@
 //! The three-headed guardian protecting your memecoin investments
 //! with military precision, transparency, and trust.
 
-use actix_web::{web, App, HttpServer, middleware::Logger};
-use actix_cors::Cors;
+use actix_web::{web, App, HttpServer, middleware::Logger, middleware::Cors};
+use actix_cors::Cors as ActixCors;
 use dotenv::dotenv;
 use std::env;
 use anyhow::Result;
 
 mod auth;
 mod api;
-mod bots;
-mod wallet;
 mod database;
-mod helius;
-mod notifications;
 mod utils;
 mod config;
 
@@ -32,7 +28,7 @@ async fn main() -> std::io::Result<()> {
     
     // Initialize database connection
     let database_url = env::var("DATABASE_URL")
-        .unwrap_or_else(|_| "postgresql://cerberus:password@localhost:5432/cerberus_hydra".to_string());
+        .unwrap_or_else(|_| "postgresql://postgres:password@db.bervahrnaauhznctodie.supabase.co:5432/postgres".to_string());
     
     let db_pool = match init_db_pool(&database_url).await {
         Ok(pool) => {
@@ -41,7 +37,7 @@ async fn main() -> std::io::Result<()> {
         }
         Err(e) => {
             log::error!("❌ Failed to connect to database: {}", e);
-            log::info!("💡 Make sure PostgreSQL is running and DATABASE_URL is correct");
+            log::info!("💡 Make sure DATABASE_URL is correct in your .env file");
             std::process::exit(1);
         }
     };
@@ -68,11 +64,11 @@ async fn main() -> std::io::Result<()> {
     log::info!("🔐 JWT expiration: {} hours", token_expiration_hours);
     
     HttpServer::new(move || {
-        let cors = Cors::default()
-            .allowed_origin("http://localhost:5173")
+        let cors = ActixCors::default()
             .allowed_origin("http://localhost:3000")
-            .allowed_origin("http://127.0.0.1:5173")
+            .allowed_origin("http://localhost:5173")
             .allowed_origin("http://127.0.0.1:3000")
+            .allowed_origin("http://127.0.0.1:5173")
             .allowed_methods(vec!["GET", "POST", "PUT", "DELETE", "OPTIONS"])
             .allowed_headers(vec!["Content-Type", "Authorization", "Accept"])
             .supports_credentials()
