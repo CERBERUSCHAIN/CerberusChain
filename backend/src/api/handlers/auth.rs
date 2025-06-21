@@ -4,7 +4,6 @@ use actix_web::{web, HttpRequest, HttpResponse, Result, HttpMessage};
 use sqlx::PgPool;
 use uuid::Uuid;
 use chrono::Utc;
-use std::net::IpAddr;
 
 use crate::database::models::{
     User, CreateUserRequest, LoginRequest, UserResponse, ApiResponse

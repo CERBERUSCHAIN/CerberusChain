@@ -8,7 +8,6 @@ use actix_web::{web, App, HttpServer, middleware::Logger};
 use actix_cors::Cors;
 use dotenv::dotenv;
 use std::env;
-use anyhow::Result;
 
 mod auth;
 mod api;

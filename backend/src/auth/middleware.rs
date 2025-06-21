@@ -3,10 +3,9 @@
 use actix_web::{
     dev::{forward_ready, Service, ServiceRequest, ServiceResponse, Transform},
     Error, HttpMessage, HttpResponse,
-    web::Data,
 };
 use futures::future::{ok, Ready};
-use std::future::{ready, Future};
+use std::future::{Future};
 use std::pin::Pin;
 use std::task::{Context, Poll};
 use sqlx::PgPool;

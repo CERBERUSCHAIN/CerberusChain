@@ -7,7 +7,6 @@ pub mod middleware;
 
 pub use jwt::*;
 pub use password::*;
-pub use middleware::*;
 
 use crate::database::models::{User, Claims};
 use anyhow::Result;
