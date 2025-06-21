@@ -92,10 +92,39 @@
   border-radius: 2px;
 }
 
+/* Dynamic strength fill colors */
+.strength-fill.weak {
+  width: 20%;
+  background-color: #ff4444;
+}
+
+.strength-fill.medium {
+  width: 60%;
+  background-color: #ffaa00;
+}
+
+.strength-fill.strong {
+  width: 100%;
+  background-color: #00ff88;
+}
+
 .strength-text {
   font-size: 0.8rem;
   font-weight: 600;
   min-width: 60px;
+}
+
+/* Dynamic strength text colors */
+.strength-text.weak {
+  color: #ff4444;
+}
+
+.strength-text.medium {
+  color: #ffaa00;
+}
+
+.strength-text.strong {
+  color: #00ff88;
 }
 
 .auth-button {

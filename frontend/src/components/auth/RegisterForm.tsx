@@ -103,25 +103,16 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess, onSwitchT
     }
   }
 
-  const getStrengthColor = () => {
-    if (passwordStrength <= 1) return '#ff4444'
-    if (passwordStrength <= 3) return '#ffaa00'
-    return '#00ff88'
+  const getStrengthClass = () => {
+    if (passwordStrength <= 1) return 'weak'
+    if (passwordStrength <= 3) return 'medium'
+    return 'strong'
   }
 
   const getStrengthText = () => {
     if (passwordStrength <= 1) return 'Weak'
     if (passwordStrength <= 3) return 'Medium'
     return 'Strong'
-  }
-
-  const strengthBarStyle = {
-    width: `${(passwordStrength / 5) * 100}%`,
-    backgroundColor: getStrengthColor()
-  }
-
-  const strengthTextStyle = {
-    color: getStrengthColor()
   }
 
   return (
@@ -184,15 +175,9 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess, onSwitchT
           {formData.password && (
             <div className="password-strength">
               <div className="strength-bar">
-                <div 
-                  className="strength-fill"
-                  style={strengthBarStyle}
-                ></div>
+                <div className={`strength-fill ${getStrengthClass()}`}></div>
               </div>
-              <span 
-                className="strength-text"
-                style={strengthTextStyle}
-              >
+              <span className={`strength-text ${getStrengthClass()}`}>
                 {getStrengthText()}
               </span>
             </div>
