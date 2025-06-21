@@ -25,7 +25,7 @@ if ($dbRunning) {
 
 # Test database connection
 Write-Host "🧪 Testing database connection..." -ForegroundColor Yellow
-$testDb = docker exec cerberus-postgres pg_isready -U cerberus -d cerberus_hydra 2>$null
+$null = docker exec cerberus-postgres pg_isready -U cerberus -d cerberus_hydra 2>$null
 if ($LASTEXITCODE -eq 0) {
     Write-Host "✅ Database connection: WORKING" -ForegroundColor Green
 } else {

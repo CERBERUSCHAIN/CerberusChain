@@ -75,7 +75,7 @@ $attempt = 0
 do {
     Start-Sleep -Seconds 2
     $attempt++
-    $ready = docker exec cerberus-postgres pg_isready -U cerberus -d cerberus_hydra 2>$null
+    $null = docker exec cerberus-postgres pg_isready -U cerberus -d cerberus_hydra 2>$null
     if ($LASTEXITCODE -eq 0) {
         Write-Host "✅ PostgreSQL is ready!" -ForegroundColor Green
         break
@@ -364,7 +364,7 @@ Write-Host "🧪 Step 5: Testing the setup..." -ForegroundColor Yellow
 
 # Test database connection
 Write-Host "   Testing database connection..." -ForegroundColor Gray
-$testConnection = docker exec cerberus-postgres psql -U cerberus -d cerberus_hydra -c "SELECT 1;" 2>$null
+$null = docker exec cerberus-postgres psql -U cerberus -d cerberus_hydra -c "SELECT 1;" 2>$null
 if ($LASTEXITCODE -eq 0) {
     Write-Host "✅ Database connection: WORKING" -ForegroundColor Green
 } else {
